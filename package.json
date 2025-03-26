@@ -1,0 +1,21 @@
+{
+  "name": "nfa-sandbox",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "check:format": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.2.5"
+  }
+}
