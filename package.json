@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:gh-pages": "tsc && vite build --base=/nfa-sandbox/",
     "preview": "vite preview",
-    "check:format": "prettier --check .",
+    "format:check": "prettier --check .",
     "format": "prettier --write ."
   },
   "devDependencies": {
