@@ -4,59 +4,61 @@ export type Id = symbol;
 export const epsilon: unique symbol = Symbol("ε");
 
 export class NFA<Alphabet> {
-  constructor(
-    private states: Set<Id>,
-    public readonly initialState: Id,
-    private transitions: Map<Id, Map<Alphabet | typeof epsilon, Set<Id>>>,
-    private acceptingStates: Set<Id>
-  ) {
+  #states: Set<Id>;
+  #transitions: Map<Id, Map<Alphabet | typeof epsilon, Set<Id>>>;
+  #acceptingStates: Set<Id>;
+
+  constructor(public readonly initialState: Id) {
+    this.#states = new Set([initialState]);
+    this.#transitions = new Map();
+    this.#acceptingStates = new Set();
     this.#checkValid();
   }
 
   #checkValid = () => {
     // the initial state exists
-    console.assert(this.states.has(this.initialState));
+    console.assert(this.#states.has(this.initialState));
 
     // check all transitions are valid
-    for (const [from, transitions] of this.transitions) {
+    for (const [from, transitions] of this.#transitions) {
       // transition state exists
-      console.assert(this.states.has(from));
+      console.assert(this.#states.has(from));
       for (const [_, to] of transitions) {
         // to states exist
-        console.assert(isSubsetOf(to, this.states));
+        console.assert(isSubsetOf(to, this.#states));
       }
     }
 
     // accepting states exist
-    console.assert(isSubsetOf(this.acceptingStates, this.states));
+    console.assert(isSubsetOf(this.#acceptingStates, this.#states));
   };
 
-  isAccepting = (state: Id) => this.acceptingStates.has(state);
+  isAccepting = (state: Id) => this.#acceptingStates.has(state);
 
   findTransition = (state: Id, input: Alphabet | typeof epsilon) =>
-    this.transitions.get(state)?.get(input) ?? new Set();
+    this.#transitions.get(state)?.get(input) ?? new Set();
 
   addState = (name: string) => {
     const state = Symbol(name);
-    this.states.add(state);
+    this.#states.add(state);
     this.#checkValid();
 
     return state;
   };
 
   removeState = (state: Id) => {
-    this.states.delete(state);
-    this.transitions.delete(state);
+    this.#states.delete(state);
+    this.#transitions.delete(state);
     this.#checkValid();
   };
 
   makeAccepting = (state: Id) => {
-    this.acceptingStates.add(state);
+    this.#acceptingStates.add(state);
     this.#checkValid();
   };
 
   makeNonAccepting = (state: Id) => {
-    this.acceptingStates.delete(state);
+    this.#acceptingStates.delete(state);
     this.#checkValid();
   };
 }

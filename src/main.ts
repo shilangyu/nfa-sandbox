@@ -23,12 +23,7 @@ const nextStateName = (() => {
 
 const initialState = Symbol(nextStateName());
 type Alphabet = 0 | 1;
-const nfa = new NFA(
-  new Set([initialState]),
-  initialState,
-  new Map<symbol, Map<Alphabet, Set<Id>>>([]),
-  new Set([])
-);
+const nfa = new NFA<Alphabet>(initialState);
 
 const shapeToState = new Map<Konva.Stage | Konva.Shape, Id>();
 
