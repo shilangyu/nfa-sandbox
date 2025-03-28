@@ -3,9 +3,11 @@ import { isSubsetOf } from "./utils";
 export type Id = symbol;
 export const epsilon: unique symbol = Symbol("ε");
 
+export type TransitionInput<Alphabet> = Alphabet | typeof epsilon;
+
 export class NFA<Alphabet> {
   #states: Set<Id>;
-  #transitions: Map<Id, Map<Alphabet | typeof epsilon, Set<Id>>>;
+  #transitions: Map<Id, Map<TransitionInput<Alphabet>, Set<Id>>>;
   #acceptingStates: Set<Id>;
 
   constructor(public readonly initialState: Id) {
@@ -35,7 +37,7 @@ export class NFA<Alphabet> {
 
   isAccepting = (state: Id) => this.#acceptingStates.has(state);
 
-  findTransition = (state: Id, input: Alphabet | typeof epsilon) =>
+  findTransition = (state: Id, input: TransitionInput<Alphabet>) =>
     this.#transitions.get(state)?.get(input) ?? new Set();
 
   addState = (name: string) => {
@@ -70,20 +72,20 @@ export class Simulation<Alphabet> {
 
   constructor(
     private nfa: NFA<Alphabet>,
-    input: Alphabet[]
+    input: Alphabet[],
   ) {
     this.states = [[nfa.initialState, input]];
   }
 
   simulateStep = () => {
-    const newState: typeof this.states = [];
+    const newStates: typeof this.states = [];
 
     for (const [state, input] of this.states) {
       // are there any epsilon transitions?
       const epsilonTransitions = this.nfa.findTransition(state, epsilon);
       // we can get there without consuming input
       for (const to of epsilonTransitions) {
-        newState.push([to, input]);
+        newStates.push([to, input]);
       }
 
       // are there any consuming transitions we can take?
@@ -93,20 +95,16 @@ export class Simulation<Alphabet> {
 
       const charTransitions = this.nfa.findTransition(state, char);
       for (const to of charTransitions) {
-        newState.push([to, rest]);
+        newStates.push([to, rest]);
       }
     }
 
-    this.states = newState;
+    this.states = newStates;
   };
 
   getCurrentSimulationState: () => SimulationState = () => {
     // a state is accepting if we are in an accepting state and there is no more input
-    if (
-      this.states.some(
-        ([state, input]) => this.nfa.isAccepting(state) && input.length === 0
-      )
-    ) {
+    if (this.states.some(([state, input]) => this.nfa.isAccepting(state) && input.length === 0)) {
       return "accept";
     }
 
