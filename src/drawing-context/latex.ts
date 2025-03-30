@@ -118,14 +118,14 @@ export class LatexDrawingContext implements DrawingContext {
     originalText: string,
     x: number,
     y: number,
-    angleOrNull: number | null,
+    angle: number | undefined,
   ): void {
     if (text.replace(" ", "").length > 0) {
       let nodeParams = "";
-      if (angleOrNull != null) {
+      if (angle != null) {
         const width = this.measureText(text).width;
-        const dx = Math.cos(angleOrNull);
-        const dy = Math.sin(angleOrNull);
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
 
         if (Math.abs(dx) > Math.abs(dy)) {
           if (dx > 0) {
@@ -154,6 +154,10 @@ export class LatexDrawingContext implements DrawingContext {
         "\\mbox{ }",
       )}$};\n`;
     }
+  }
+
+  async export(): Promise<Blob> {
+    return new Blob([this.toLaTeX()], { type: "application/x-tex" });
   }
 
   translate(): void {}

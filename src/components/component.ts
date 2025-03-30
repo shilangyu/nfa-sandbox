@@ -21,9 +21,18 @@ export interface DrawingContext {
   translate: (x: number, y: number) => void;
   clearRect: (x: number, y: number, width: number, height: number) => void;
   fillText: (text: string, x: number, y: number, maxWidth?: number) => void;
+  advancedFillText?: (
+    text: string,
+    originalText: string,
+    x: number,
+    y: number,
+    angle: number | undefined,
+  ) => void;
   measureText: (text: string) => { width: number };
   set font(value: string);
   set strokeStyle(value: string);
   set fillStyle(value: string);
   set lineWidth(value: number);
+
+  export(): Promise<Blob>;
 }

@@ -119,6 +119,10 @@ export class SvgDrawingContext implements DrawingContext {
     this._transY = y;
   }
 
+  async export(): Promise<Blob> {
+    return new Blob([this.toSVG()], { type: "image/svg+xml" });
+  }
+
   save(): void {}
   restore(): void {}
   clearRect(): void {}

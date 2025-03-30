@@ -89,14 +89,18 @@ export function drawText(
   }
 
   // draw text and caret (round the coordinates so the caret falls on a pixel)
-  x = Math.round(x);
-  y = Math.round(y);
-  c.fillText(text, x, y + 6);
-  if (isSelected && hasFocus && document.hasFocus()) {
-    x += width;
-    c.beginPath();
-    c.moveTo(x, y - 10);
-    c.lineTo(x, y + 10);
-    c.stroke();
+  if ("advancedFillText" in c && c.advancedFillText) {
+    c.advancedFillText(text, originalText, x + width / 2, y, angle);
+  } else {
+    x = Math.round(x);
+    y = Math.round(y);
+    c.fillText(text, x, y + 6);
+    if (isSelected && hasFocus && document.hasFocus()) {
+      x += width;
+      c.beginPath();
+      c.moveTo(x, y - 10);
+      c.lineTo(x, y + 10);
+      c.stroke();
+    }
   }
 }

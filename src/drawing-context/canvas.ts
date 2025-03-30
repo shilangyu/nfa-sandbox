@@ -77,4 +77,16 @@ export class CanvasDrawingContext implements DrawingContext {
   set lineWidth(value: number) {
     this.#ctx.lineWidth = value;
   }
+
+  async export(): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      this.#ctx.canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject("Failed to export canvas to blob");
+        }
+      });
+    });
+  }
 }
