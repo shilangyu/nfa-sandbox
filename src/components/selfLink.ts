@@ -5,27 +5,24 @@ import { Node } from "./node";
 
 export class SelfLink implements Component {
   node: Node;
-  anchorAngle: number;
-  mouseOffsetAngle: number;
-  text: string;
+  anchorAngle: number = 0;
+  moveOffsetAngle: number = 0;
+  text: string = "";
 
   constructor(node: Node, mouse: Point | undefined) {
     this.node = node;
-    this.anchorAngle = 0;
-    this.mouseOffsetAngle = 0;
-    this.text = "";
 
     if (mouse) {
       this.setAnchorPoint(mouse.x, mouse.y);
     }
   }
 
-  setMouseStart(x: number, y: number): void {
-    this.mouseOffsetAngle = this.anchorAngle - Math.atan2(y - this.node.y, x - this.node.x);
+  setMoveStart(x: number, y: number): void {
+    this.moveOffsetAngle = this.anchorAngle - Math.atan2(y - this.node.y, x - this.node.x);
   }
 
   setAnchorPoint(x: number, y: number): void {
-    this.anchorAngle = Math.atan2(y - this.node.y, x - this.node.x) + this.mouseOffsetAngle;
+    this.anchorAngle = Math.atan2(y - this.node.y, x - this.node.x) + this.moveOffsetAngle;
     // snap to 90 degrees
     const snap = Math.round(this.anchorAngle / (Math.PI / 2)) * (Math.PI / 2);
     if (Math.abs(this.anchorAngle - snap) < 0.1) this.anchorAngle = snap;

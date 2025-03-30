@@ -4,7 +4,7 @@ import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
 import { Point } from "./geometry";
-import { State } from "./state";
+import { FinalizedLink, State } from "./state";
 import "./style.css";
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
@@ -13,7 +13,7 @@ const c = sandbox.getContext("2d")!;
 const state = new State();
 
 const canvasHasFocus = () => {
-  return (document.activeElement || document.body) == document.body;
+  return (document.activeElement ?? document.body) === document.body;
 };
 
 const onResize = () => {
@@ -34,39 +34,51 @@ const onResize = () => {
   draw();
 };
 
+// TODO: does not work properly
 window.addEventListener("resize", onResize);
 
 onResize();
 
-let movingObject = false;
-let shift = false;
+let movedObject: FinalizedLink | Node | undefined = undefined;
 let originalClick: Point | undefined = undefined;
 
 function draw() {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
   state.draw(c, hasFocus);
-  console.log("draing");
 }
+
+sandbox.addEventListener("dblclick", function (e) {
+  const mouse = { x: e.offsetX, y: e.offsetY };
+  const obj = state.objectAt(mouse);
+
+  if (obj === undefined) {
+    const newNode = new Node(mouse.x, mouse.y);
+    state.addNode(newNode);
+    state.selectObject(newNode);
+  } else if (state.selectedObject instanceof Node) {
+    state.selectedObject.toggleAcceptState();
+  }
+  draw();
+});
 
 sandbox.addEventListener("mousedown", function (e) {
   const mouse = { x: e.offsetX, y: e.offsetY };
   const selectedObject = state.objectAt(mouse);
   state.selectObject(selectedObject);
-  movingObject = false;
+  movedObject = undefined;
   originalClick = mouse;
 
   if (selectedObject !== undefined) {
-    if (shift && selectedObject instanceof Node) {
+    if (e.shiftKey && selectedObject instanceof Node) {
       state.setCurrentLink(new SelfLink(selectedObject, mouse));
     } else {
-      movingObject = true;
-      // FIXME: make less dynamic?
-      if ("setMouseStart" in selectedObject) {
-        selectedObject.setMouseStart(mouse.x, mouse.y);
+      movedObject = selectedObject;
+      if ("setMoveStart" in selectedObject) {
+        selectedObject.setMoveStart(mouse.x, mouse.y);
       }
     }
-  } else if (shift) {
+  } else if (e.shiftKey) {
     state.setCurrentLink(new TemporaryLink(mouse, mouse));
   }
 
@@ -81,24 +93,8 @@ sandbox.addEventListener("mousedown", function (e) {
   }
 });
 
-sandbox.addEventListener("dblclick", function (e) {
-  const mouse = { x: e.offsetX, y: e.offsetY };
-  console.log("double click", mouse);
-  const obj = state.objectAt(mouse);
-
-  if (obj === undefined) {
-    const newNode = new Node(mouse.x, mouse.y);
-    state.addNode(newNode);
-    state.selectObject(newNode);
-  } else if (state.selectedObject instanceof Node) {
-    state.selectedObject.toggleAcceptState();
-  }
-  draw();
-});
-
-/// FIXMe: remove global shift flag and use e.shiftKey
-
 sandbox.addEventListener("mousemove", function (e) {
+  if (originalClick === undefined) return;
   const mouse = { x: e.offsetX, y: e.offsetY };
 
   if (state.currentLink !== undefined) {
@@ -116,7 +112,14 @@ sandbox.addEventListener("mousemove", function (e) {
     } else {
       if (targetNode === state.selectedObject) {
         state.setCurrentLink(new SelfLink(state.selectedObject, mouse));
-      } else if (targetNode !== undefined) {
+      }
+
+      if (!(state.selectedObject instanceof Node)) {
+        console.error("selectedObject should be a Node");
+        return;
+      }
+
+      if (targetNode !== undefined) {
         state.setCurrentLink(new Link(state.selectedObject, targetNode));
       } else {
         state.setCurrentLink(
@@ -127,8 +130,8 @@ sandbox.addEventListener("mousemove", function (e) {
     draw();
   }
 
-  if (movingObject) {
-    state.selectedObject.setAnchorPoint(mouse.x, mouse.y);
+  if (movedObject) {
+    movedObject.setAnchorPoint(mouse.x, mouse.y, State.snapToPadding);
     if (state.selectedObject instanceof Node) {
       state.snapNode(state.selectedObject);
     }
@@ -137,16 +140,14 @@ sandbox.addEventListener("mousemove", function (e) {
 });
 
 sandbox.addEventListener("mouseup", () => {
-  movingObject = false;
+  movedObject = undefined;
 
   state.upgradeCurrentLink();
   draw();
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.code == "ShiftLeft") {
-    shift = true;
-  } else if (!canvasHasFocus()) {
+  if (!canvasHasFocus()) {
     // don't read keystrokes when other things have focus
     return true;
   } else if (e.code === "Backspace") {
@@ -164,12 +165,6 @@ document.addEventListener("keydown", (e) => {
       state.removeSelectedObject();
       draw();
     }
-  }
-});
-
-document.addEventListener("keyup", (e) => {
-  if (e.code === "ShiftLeft") {
-    shift = false;
   }
 });
 

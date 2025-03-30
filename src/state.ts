@@ -5,7 +5,7 @@ import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
 import { Point } from "./geometry";
 
-type FinalizedLink = Link | SelfLink | StartLink;
+export type FinalizedLink = Link | SelfLink | StartLink;
 type WorkLink = Link | SelfLink | StartLink | TemporaryLink;
 
 export class State {
@@ -94,13 +94,13 @@ export class State {
     c.translate(0.5, 0.5);
 
     for (const node of this.nodes) {
-      const isSelected = node == this.selectedObject;
+      const isSelected = node === this.selectedObject;
       c.lineWidth = 1;
       c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
       node.draw(c, hasFocus, isSelected);
     }
     for (const link of this.links) {
-      const isSelected = link == this.selectedObject;
+      const isSelected = link === this.selectedObject;
       c.lineWidth = 1;
       c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
       link.draw(c, hasFocus, isSelected);

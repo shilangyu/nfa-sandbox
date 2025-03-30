@@ -5,15 +5,12 @@ import { Node } from "./node";
 
 export class StartLink implements Component {
   node: Node;
-  deltaX: number;
-  deltaY: number;
-  text: string;
+  deltaX = 0;
+  deltaY = 0;
+  text = "";
 
   constructor(node: Node, snapToPadding: number, start: Point | undefined) {
     this.node = node;
-    this.deltaX = 0;
-    this.deltaY = 0;
-    this.text = "";
 
     if (start) {
       this.setAnchorPoint(start.x, start.y, snapToPadding);

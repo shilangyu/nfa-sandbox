@@ -6,20 +6,15 @@ import { Node } from "./node";
 export class Link implements Component {
   nodeA: Node;
   nodeB: Node;
-  text: string;
-  lineAngleAdjust: number;
-  parallelPart: number;
-  perpendicularPart: number;
+  text: string = "";
+  lineAngleAdjust = 0; // value to add to textAngle when link is straight line
+  // make anchor point relative to the locations of nodeA and nodeB
+  parallelPart = 0.5; // percentage from nodeA to nodeB
+  perpendicularPart = 0; // pixels from line between nodeA and nodeB
 
   constructor(a: Node, b: Node) {
     this.nodeA = a;
     this.nodeB = b;
-    this.text = "";
-    this.lineAngleAdjust = 0; // value to add to textAngle when link is straight line
-
-    // make anchor point relative to the locations of nodeA and nodeB
-    this.parallelPart = 0.5; // percentage from nodeA to nodeB
-    this.perpendicularPart = 0; // pixels from line between nodeA and nodeB
   }
 
   getAnchorPoint() {

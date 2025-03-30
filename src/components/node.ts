@@ -4,8 +4,8 @@ import { drawText } from "./drawing";
 export class Node implements Component {
   x: number;
   y: number;
-  mouseOffsetX: number = 0;
-  mouseOffsetY: number = 0;
+  moveOffsetX: number = 0;
+  moveOffsetY: number = 0;
   isAcceptState: boolean = false;
   text: string = "";
 
@@ -16,14 +16,14 @@ export class Node implements Component {
     this.y = y;
   }
 
-  setMouseStart(x: number, y: number): void {
-    this.mouseOffsetX = this.x - x;
-    this.mouseOffsetY = this.y - y;
+  setMoveStart(x: number, y: number): void {
+    this.moveOffsetX = this.x - x;
+    this.moveOffsetY = this.y - y;
   }
 
   setAnchorPoint(x: number, y: number): void {
-    this.x = x + this.mouseOffsetX;
-    this.y = y + this.mouseOffsetY;
+    this.x = x + this.moveOffsetX;
+    this.y = y + this.moveOffsetY;
   }
 
   draw(c: CanvasRenderingContext2D, hasFocus: boolean, isSelected: boolean): void {
