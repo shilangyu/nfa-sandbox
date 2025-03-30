@@ -102,7 +102,7 @@ export class Simulation<Alphabet> {
     this.states = newStates;
   };
 
-  getCurrentSimulationState: () => SimulationState = () => {
+  getCurrentSimulationState = (): SimulationState => {
     // a state is accepting if we are in an accepting state and there is no more input
     if (this.states.some(([state, input]) => this.nfa.isAccepting(state) && input.length === 0)) {
       return "accept";
