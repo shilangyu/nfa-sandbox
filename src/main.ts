@@ -5,12 +5,14 @@ import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
+import { CanvasDrawingContext } from "./drawing-context/canvas";
 import { FinalizedLink, State } from "./state";
 import "./style.css";
 import { Point } from "./utils";
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
-const c = sandbox.getContext("2d")!;
+const ctx = sandbox.getContext("2d")!;
+const c = new CanvasDrawingContext(ctx);
 
 const state = loadBackup() ?? new State();
 
@@ -27,7 +29,7 @@ const onResize = () => {
   sandbox.height = rect.height * dpr;
 
   // Scale the context to ensure correct drawing operations
-  c.scale(dpr, dpr);
+  ctx.scale(dpr, dpr);
 
   // Set the "drawn" size of the canvas
   sandbox.style.width = `${rect.width}px`;

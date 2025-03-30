@@ -1,4 +1,6 @@
-export function drawArrow(c: CanvasRenderingContext2D, x: number, y: number, angle: number): void {
+import { DrawingContext } from "./component";
+
+export function drawArrow(c: DrawingContext, x: number, y: number, angle: number): void {
   const dx = Math.cos(angle);
   const dy = Math.sin(angle);
   c.beginPath();
@@ -9,7 +11,7 @@ export function drawArrow(c: CanvasRenderingContext2D, x: number, y: number, ang
 }
 
 export function drawText(
-  c: CanvasRenderingContext2D,
+  c: DrawingContext,
   originalText: string,
   x: number,
   y: number,

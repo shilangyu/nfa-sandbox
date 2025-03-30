@@ -22,4 +22,8 @@ export interface DrawingContext {
   clearRect: (x: number, y: number, width: number, height: number) => void;
   fillText: (text: string, x: number, y: number, maxWidth?: number) => void;
   measureText: (text: string) => { width: number };
+  set font(value: string);
+  set strokeStyle(value: string);
+  set fillStyle(value: string);
+  set lineWidth(value: number);
 }

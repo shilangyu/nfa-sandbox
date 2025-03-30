@@ -1,3 +1,4 @@
+import { DrawingContext } from "./components/component";
 import { Link } from "./components/link";
 import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
@@ -90,7 +91,7 @@ export class State {
     this.selectedObject = undefined;
   };
 
-  draw = (c: CanvasRenderingContext2D, hasFocus: boolean) => {
+  draw = (c: DrawingContext, hasFocus: boolean) => {
     c.save();
     c.translate(0.5, 0.5);
 
