@@ -17,7 +17,7 @@ export function drawText(
   isSelected: boolean,
   hasFocus: boolean,
 ) {
-  var greekLetterNames = [
+  const greekLetterNames = [
     "Alpha",
     "Beta",
     "Gamma",
@@ -46,8 +46,8 @@ export function drawText(
 
   function convertLatexShortcuts(text: string) {
     // html greek characters
-    for (var i = 0; i < greekLetterNames.length; i++) {
-      var name = greekLetterNames[i];
+    for (let i = 0; i < greekLetterNames.length; i++) {
+      const name = greekLetterNames[i];
       text = text.replace(
         new RegExp("\\\\" + name, "g"),
         String.fromCharCode(913 + i + (i > 16 ? 1 : 0)),
@@ -59,7 +59,7 @@ export function drawText(
     }
 
     // subscripts
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
       text = text.replace(new RegExp("_" + i, "g"), String.fromCharCode(8320 + i));
     }
 
@@ -68,18 +68,18 @@ export function drawText(
 
   let text = convertLatexShortcuts(originalText);
   c.font = '20px "IBM Plex Sans"';
-  var width = c.measureText(text).width;
+  const width = c.measureText(text).width;
 
   // center the text
   x -= width / 2;
 
   // position the text intelligently if given an angle
   if (angle !== undefined) {
-    var cos = Math.cos(angle);
-    var sin = Math.sin(angle);
-    var cornerPointX = (width / 2 + 5) * (cos > 0 ? 1 : -1);
-    var cornerPointY = (10 + 5) * (sin > 0 ? 1 : -1);
-    var slide =
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const cornerPointX = (width / 2 + 5) * (cos > 0 ? 1 : -1);
+    const cornerPointY = (10 + 5) * (sin > 0 ? 1 : -1);
+    const slide =
       sin * Math.pow(Math.abs(sin), 40) * cornerPointX -
       cos * Math.pow(Math.abs(cos), 10) * cornerPointY;
     x += cornerPointX - sin * slide;

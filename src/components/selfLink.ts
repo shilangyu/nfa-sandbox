@@ -9,11 +9,11 @@ export class SelfLink implements Component {
   moveOffsetAngle: number = 0;
   text: string = "";
 
-  constructor(node: Node, mouse: Point | undefined) {
+  constructor(node: Node, start: Point | undefined) {
     this.node = node;
 
-    if (mouse) {
-      this.setAnchorPoint(mouse.x, mouse.y);
+    if (start) {
+      this.setAnchorPoint(start.x, start.y);
     }
   }
 

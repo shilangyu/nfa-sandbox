@@ -4,7 +4,7 @@ A sandbox for creating, running, and testing NFAs.
 
 TODO: save as svg/latex/png
 
-TODO: save/restore state on refresh
+TODO: change how start links work. Allow for only one, make it the initial state.
 
 Deployed [here](https://github.shilangyu.dev/nfa-sandbox)
 

@@ -1,3 +1,4 @@
+import { loadBackup, saveBackup } from "./backup";
 import { Link } from "./components/link";
 import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
@@ -10,7 +11,7 @@ import { Point } from "./utils";
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const c = sandbox.getContext("2d")!;
 
-const state = new State();
+const state = loadBackup() ?? new State();
 
 const canvasHasFocus = () => {
   return (document.activeElement ?? document.body) === document.body;
@@ -46,6 +47,7 @@ function draw() {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
   state.draw(c, hasFocus);
+  saveBackup(state);
 }
 
 sandbox.addEventListener("dblclick", function (e) {
@@ -105,7 +107,9 @@ sandbox.addEventListener("mousemove", function (e) {
 
     if (state.selectedObject === undefined) {
       if (targetNode !== undefined) {
-        state.setCurrentLink(new StartLink(targetNode, State.snapToPadding, originalClick));
+        state.setCurrentLink(
+          new StartLink(targetNode, { point: originalClick, snapToPadding: State.snapToPadding }),
+        );
       } else {
         state.setCurrentLink(new TemporaryLink(originalClick, mouse));
       }

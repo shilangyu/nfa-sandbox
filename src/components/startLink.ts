@@ -9,11 +9,11 @@ export class StartLink implements Component {
   deltaY = 0;
   text = "";
 
-  constructor(node: Node, snapToPadding: number, start: Point | undefined) {
+  constructor(node: Node, start: { point: Point; snapToPadding: number } | undefined) {
     this.node = node;
 
     if (start) {
-      this.setAnchorPoint(start.x, start.y, snapToPadding);
+      this.setAnchorPoint(start.point.x, start.point.y, start.snapToPadding);
     }
   }
 
