@@ -48,6 +48,10 @@ export class State {
 
   upgradeCurrentLink = () => {
     if (this.currentLink !== undefined && !(this.currentLink instanceof TemporaryLink)) {
+      if (this.currentLink instanceof StartLink) {
+        // we want only a single start link at any given time
+        this.links = this.links.filter((link) => !(link instanceof StartLink));
+      }
       this.links.push(this.currentLink);
       this.selectObject(this.currentLink);
     }

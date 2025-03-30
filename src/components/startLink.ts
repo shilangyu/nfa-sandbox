@@ -1,13 +1,12 @@
 import { Point } from "../utils";
 import { Component, DrawingContext } from "./component";
-import { drawArrow, drawText } from "./drawing";
+import { drawArrow } from "./drawing";
 import { Node } from "./node";
 
 export class StartLink implements Component {
   node: Node;
   deltaX = 0;
   deltaY = 0;
-  text = "";
 
   constructor(node: Node, start: { point: Point; snapToPadding: number } | undefined) {
     this.node = node;
@@ -42,7 +41,7 @@ export class StartLink implements Component {
     };
   }
 
-  draw(c: DrawingContext, hasFocus: boolean, isSelected: boolean): void {
+  draw(c: DrawingContext): void {
     const stuff = this.getEndPoints();
 
     // draw the line
@@ -50,10 +49,6 @@ export class StartLink implements Component {
     c.moveTo(stuff.startX, stuff.startY);
     c.lineTo(stuff.endX, stuff.endY);
     c.stroke();
-
-    // draw the text at the end without the arrow
-    const textAngle = Math.atan2(stuff.startY - stuff.endY, stuff.startX - stuff.endX);
-    drawText(c, this.text, stuff.startX, stuff.startY, textAngle, isSelected, hasFocus);
 
     // draw the head of the arrow
     drawArrow(c, stuff.endX, stuff.endY, Math.atan2(-this.deltaY, -this.deltaX));

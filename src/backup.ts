@@ -23,7 +23,6 @@ type Backup = {
         node: number;
         deltaX: number;
         deltaY: number;
-        text: string;
       }
     | {
         type: "Link";
@@ -64,7 +63,6 @@ export const createBackup = (state: State) => {
       backup.links.push({
         type: "StartLink",
         node: state.nodes.indexOf(link.node),
-        text: link.text,
         deltaX: link.deltaX,
         deltaY: link.deltaY,
       });
@@ -116,7 +114,6 @@ export const loadBackup = (): State | undefined => {
           link = new StartLink(state.nodes[backupLink.node], undefined);
           link.deltaX = backupLink.deltaX;
           link.deltaY = backupLink.deltaY;
-          link.text = backupLink.text;
           break;
         case "Link":
           link = new Link(state.nodes[backupLink.nodeA], state.nodes[backupLink.nodeB]);

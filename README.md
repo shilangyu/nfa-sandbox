@@ -2,8 +2,6 @@
 
 A sandbox for creating, running, saving, and testing NFAs.
 
-TODO: change how start links work. Allow for only one, make it the initial state.
-
 Deployed [here](https://github.shilangyu.dev/nfa-sandbox)
 
 ## Acknowledgments
