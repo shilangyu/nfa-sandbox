@@ -3,9 +3,9 @@ import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
-import { Point } from "./geometry";
 import { FinalizedLink, State } from "./state";
 import "./style.css";
+import { Point } from "./utils";
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const c = sandbox.getContext("2d")!;

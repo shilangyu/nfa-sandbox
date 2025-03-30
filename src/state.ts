@@ -3,7 +3,7 @@ import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
-import { Point } from "./geometry";
+import { Point } from "./utils";
 
 export type FinalizedLink = Link | SelfLink | StartLink;
 type WorkLink = Link | SelfLink | StartLink | TemporaryLink;
@@ -48,6 +48,7 @@ export class State {
   upgradeCurrentLink = () => {
     if (this.currentLink !== undefined && !(this.currentLink instanceof TemporaryLink)) {
       this.links.push(this.currentLink);
+      this.selectObject(this.currentLink);
     }
     this.currentLink = undefined;
   };

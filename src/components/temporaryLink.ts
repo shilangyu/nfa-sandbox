@@ -1,4 +1,4 @@
-import { Point } from "../geometry";
+import { Point } from "../utils";
 import { Component } from "./component";
 import { drawArrow } from "./drawing";
 
