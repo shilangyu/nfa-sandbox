@@ -130,9 +130,9 @@ export class SvgDrawingContext implements DrawingContext {
 
 const textToXML = (text: string) => {
   text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  var result = "";
-  for (var i = 0; i < text.length; i++) {
-    var c = text.charCodeAt(i);
+  let result = "";
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
     if (c >= 0x20 && c <= 0x7e) {
       result += text[i];
     } else {

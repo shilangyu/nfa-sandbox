@@ -122,7 +122,7 @@ export class LatexDrawingContext implements DrawingContext {
   ): void {
     if (text.replace(" ", "").length > 0) {
       let nodeParams = "";
-      if (angle != null) {
+      if (angle !== undefined) {
         const width = this.measureText(text).width;
         const dx = Math.cos(angle);
         const dy = Math.sin(angle);
