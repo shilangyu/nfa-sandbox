@@ -8,7 +8,20 @@
   </head>
   <body>
     <canvas id="sandbox"></canvas>
-    <div id="simulation"></div>
+    <div id="simulation">
+      <input type="text" id="simulation-input" placeholder="Input string" />
+      <button id="simulation-step">Step</button>
+      <button id="simulation-fully">Run fully</button>
+      <span class="spacer"></span>
+      <div class="column">
+        State:
+        <div id="simulation-state">
+          <div style="visibility: hidden" class="error">Rejected</div>
+          <div style="visibility: hidden" class="success">Accepted</div>
+          <div style="visibility: hidden" class="progress">Running...</div>
+        </div>
+      </div>
+    </div>
     <div id="exports">
       Export as: <a id="export-png">PNG</a> | <a id="export-svg">SVG</a> |
       <a id="export-latex">LaTeX</a>

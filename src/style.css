@@ -1,4 +1,6 @@
+@import "@fontsource/ibm-plex-sans/700";
 @import "@fontsource/ibm-plex-sans/400";
+@import "@fontsource/ibm-plex-sans/400-italic";
 
 :root {
   font-family: "IBM Plex Sans", system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -37,9 +39,29 @@ h1 {
   line-height: 1.1;
 }
 
+.column {
+  display: flex;
+}
+
 #sandbox {
   flex: 1;
   width: 100%;
+}
+
+#simulation {
+  display: flex;
+  gap: 1em;
+  padding: 0.5em 1em;
+}
+
+#simulation-state {
+  display: grid;
+  margin-left: 1em;
+}
+
+#simulation-state > * {
+  grid-row: 1;
+  grid-column: 1;
 }
 
 #exports {
@@ -47,6 +69,25 @@ h1 {
 }
 #exports > a {
   cursor: pointer;
+}
+
+.error {
+  color: coral;
+  font-weight: bold;
+}
+
+.success {
+  color: limegreen;
+  font-weight: bold;
+}
+
+.progress {
+  color: darkturquoise;
+  font-style: italic;
+}
+
+.spacer {
+  flex: 1;
 }
 
 button {
