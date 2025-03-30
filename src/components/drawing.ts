@@ -67,7 +67,7 @@ export function drawText(
   }
 
   let text = convertLatexShortcuts(originalText);
-  c.font = '20px "Times New Roman", serif';
+  c.font = '20px "IBM Plex Sans"';
   var width = c.measureText(text).width;
 
   // center the text
