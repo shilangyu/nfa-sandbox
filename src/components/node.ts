@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component, DrawingContext } from "./component";
 import { drawText } from "./drawing";
 
 export class Node implements Component {
@@ -26,7 +26,7 @@ export class Node implements Component {
     this.y = y + this.moveOffsetY;
   }
 
-  draw(c: CanvasRenderingContext2D, hasFocus: boolean, isSelected: boolean): void {
+  draw(c: DrawingContext, hasFocus: boolean, isSelected: boolean): void {
     // draw the circle
     c.beginPath();
     c.arc(this.x, this.y, Node.radius, 0, 2 * Math.PI, false);

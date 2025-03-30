@@ -1,5 +1,5 @@
 import { Point } from "../utils";
-import { Component } from "./component";
+import { Component, DrawingContext } from "./component";
 import { drawArrow } from "./drawing";
 
 export class TemporaryLink implements Component {
@@ -11,7 +11,7 @@ export class TemporaryLink implements Component {
     this.to = to;
   }
 
-  draw(c: CanvasRenderingContext2D) {
+  draw(c: DrawingContext) {
     // draw the line
     c.beginPath();
     c.moveTo(this.to.x, this.to.y);

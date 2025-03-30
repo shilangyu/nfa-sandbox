@@ -1,5 +1,5 @@
 import { circleFromThreePoints } from "../utils";
-import { Component } from "./component";
+import { Component, DrawingContext } from "./component";
 import { drawArrow, drawText } from "./drawing";
 import { Node } from "./node";
 
@@ -119,7 +119,7 @@ export class Link implements Component {
     };
   }
 
-  draw(c: CanvasRenderingContext2D, hasFocus: boolean, isSelected: boolean) {
+  draw(c: DrawingContext, hasFocus: boolean, isSelected: boolean) {
     const stuff = this.getEndPointsAndCircle();
 
     // draw arc

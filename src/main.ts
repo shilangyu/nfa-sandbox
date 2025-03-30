@@ -1,4 +1,5 @@
 import { loadBackup, saveBackup } from "./backup";
+import { DrawingContext } from "./components/component";
 import { Link } from "./components/link";
 import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
@@ -43,12 +44,16 @@ onResize();
 let movedObject: FinalizedLink | Node | undefined = undefined;
 let originalClick: Point | undefined = undefined;
 
-function draw() {
+const drawWith = (c: DrawingContext) => {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
   state.draw(c, hasFocus);
+};
+
+const draw = () => {
+  drawWith(c);
   saveBackup(state);
-}
+};
 
 sandbox.addEventListener("dblclick", function (e) {
   const mouse = { x: e.offsetX, y: e.offsetY };

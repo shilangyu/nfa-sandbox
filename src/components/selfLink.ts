@@ -1,5 +1,5 @@
 import { Point } from "../utils";
-import { Component } from "./component";
+import { Component, DrawingContext } from "./component";
 import { drawArrow, drawText } from "./drawing";
 import { Node } from "./node";
 
@@ -55,7 +55,7 @@ export class SelfLink implements Component {
     };
   }
 
-  draw(c: CanvasRenderingContext2D, hasFocus: boolean, isSelected: boolean): void {
+  draw(c: DrawingContext, hasFocus: boolean, isSelected: boolean): void {
     const stuff = this.getEndPointsAndCircle();
     // draw arc
     c.beginPath();
