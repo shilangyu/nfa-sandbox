@@ -65,7 +65,8 @@ export class NFA<Alphabet> {
   };
 }
 
-export type SimulationState = "running" | "accept" | "reject";
+export type SimulationFinalState = "accept" | "reject";
+export type SimulationState = "running" | SimulationFinalState;
 
 export class Simulation<Alphabet> {
   private states: [Id, Alphabet[]][];
@@ -110,5 +111,15 @@ export class Simulation<Alphabet> {
 
     // if there are still states to explore, we are still running
     return this.states.length === 0 ? "reject" : "running";
+  };
+
+  simulateTillEnd = (): SimulationFinalState => {
+    let state = this.getCurrentSimulationState();
+    while (state === "running") {
+      this.simulateStep();
+      state = this.getCurrentSimulationState();
+    }
+
+    return state;
   };
 }
