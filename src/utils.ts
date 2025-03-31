@@ -3,6 +3,14 @@ export const isSubsetOf = <T>(a: Set<T>, b: Set<T>) => {
   return true;
 };
 
+export const shallowArrayEquals = <T>(a: T[], b: T[]) => {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
 export type Point = { x: number; y: number };
 
 const det = (

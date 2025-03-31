@@ -4,6 +4,7 @@ import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
+import { Simulation } from "./simulation";
 import { Point } from "./utils";
 
 export type FinalizedLink = Link | SelfLink | StartLink;
@@ -14,6 +15,8 @@ export class State {
   links: FinalizedLink[] = [];
   selectedObject: Node | FinalizedLink | undefined = undefined;
   currentLink: WorkLink | undefined = undefined;
+
+  simulation: Simulation | undefined = undefined;
 
   static snapToPadding = 6;
 
@@ -100,21 +103,33 @@ export class State {
     c.translate(0.5, 0.5);
 
     for (const node of this.nodes) {
+      c.save();
       const isSelected = node === this.selectedObject;
       c.lineWidth = 1;
       c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
       node.draw(c, hasFocus, isSelected);
+      c.restore();
     }
     for (const link of this.links) {
+      c.save();
       const isSelected = link === this.selectedObject;
       c.lineWidth = 1;
       c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
       link.draw(c, hasFocus, isSelected);
+      c.restore();
     }
     if (this.currentLink !== undefined) {
+      c.save();
       c.lineWidth = 1;
       c.fillStyle = c.strokeStyle = "black";
       this.currentLink.draw(c, hasFocus, false);
+      c.restore();
+    }
+
+    if (this.simulation !== undefined) {
+      c.save();
+      this.simulation.draw(c);
+      c.restore();
     }
 
     c.restore();

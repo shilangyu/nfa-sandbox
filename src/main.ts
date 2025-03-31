@@ -12,6 +12,20 @@ import { FinalizedLink, State } from "./state";
 import "./style.css";
 import { Point } from "./utils";
 
+// TODO: work better in dark mode
+// TODO: change cursor when dragging
+
+const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
+const simulationStep = document.querySelector<HTMLButtonElement>("#simulation-step")!;
+const simulationFully = document.querySelector<HTMLButtonElement>("#simulation-fully")!;
+const simulationStateRunning = document.querySelector<HTMLDivElement>(
+  "#simulation-state > .progress",
+)!;
+const simulationStateAccept = document.querySelector<HTMLDivElement>(
+  "#simulation-state > .success",
+)!;
+const simulationStateReject = document.querySelector<HTMLDivElement>("#simulation-state > .error")!;
+
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const ctx = sandbox.getContext("2d")!;
 const c = new CanvasDrawingContext(ctx);
@@ -30,6 +44,25 @@ const drawWith = (c: DrawingContext) => {
 
 const draw = () => {
   drawWith(c);
+
+  simulationStateRunning.style.visibility = "hidden";
+  simulationStateAccept.style.visibility = "hidden";
+  simulationStateReject.style.visibility = "hidden";
+  if (state.simulation !== undefined) {
+    const simulationState = state.simulation.getCurrentSimulationState();
+    switch (simulationState) {
+      case "running":
+        simulationStateRunning.style.visibility = "visible";
+        break;
+      case "accept":
+        simulationStateAccept.style.visibility = "visible";
+        break;
+      case "reject":
+        simulationStateReject.style.visibility = "visible";
+        break;
+    }
+  }
+
   saveBackup(state);
 };
 
