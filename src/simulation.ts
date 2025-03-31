@@ -4,7 +4,7 @@ import { Link } from "./components/link";
 import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
-import { State } from "./state";
+import { FinalizedLink, State } from "./state";
 import { shallowArrayEquals } from "./utils";
 
 export type SimulationFinalState = "accept" | "reject";
@@ -13,7 +13,7 @@ export type SimulationState = "running" | SimulationFinalState;
 const epsilon: unique symbol = Symbol("ε");
 
 export class Simulation implements Component {
-  private states: [Node, string[]][];
+  private states: [Node, string[], FinalizedLink][];
 
   constructor(
     private state: State,
@@ -21,20 +21,20 @@ export class Simulation implements Component {
   ) {
     this.states = state.links
       .filter((link) => link instanceof StartLink)
-      .map((link) => [link.node, input]);
+      .map((link) => [link.node, input, link]);
   }
 
-  #findTransition = (state: Node, input: string | typeof epsilon) => {
+  #findTransition = (state: Node, input: string | typeof epsilon): [Node, FinalizedLink][] => {
     const letter = input === epsilon ? "" : input;
 
     return this.state.links
-      .map((link) => {
+      .map((link): [Node, FinalizedLink] | undefined => {
         if (link instanceof StartLink) return undefined;
         else if (link instanceof SelfLink) {
-          if (link.node === state && link.text === letter) return link.node;
+          if (link.node === state && link.text === letter) return [link.node, link];
           else return undefined;
         } else if (link instanceof Link) {
-          if (link.nodeA === state && link.text === letter) return link.nodeB;
+          if (link.nodeA === state && link.text === letter) return [link.nodeB, link];
           else return undefined;
         } else link satisfies never;
       })
@@ -45,15 +45,15 @@ export class Simulation implements Component {
     return this.state.nodes.some((node) => node.isAcceptState && node === state);
   };
 
-  #deduplicateStates = (states: [Node, string[]][]) => {
-    const deduplicatedStates: [Node, string[]][] = [];
+  #deduplicateStates = (states: [Node, string[], FinalizedLink][]) => {
+    const deduplicatedStates: [Node, string[], FinalizedLink][] = [];
 
-    for (const [state, input] of states) {
+    for (const [state, input, link] of states) {
       const existing = deduplicatedStates.some(
-        ([s, i]) => s === state && shallowArrayEquals(input, i),
+        ([s, i, l]) => s === state && shallowArrayEquals(input, i) && l === link,
       );
       if (!existing) {
-        deduplicatedStates.push([state, input]);
+        deduplicatedStates.push([state, input, link]);
       }
     }
 
@@ -67,8 +67,8 @@ export class Simulation implements Component {
       // are there any epsilon transitions?
       const epsilonTransitions = this.#findTransition(state, epsilon);
       // we can get there without consuming input
-      for (const to of epsilonTransitions) {
-        newStates.push([to, input]);
+      for (const [to, link] of epsilonTransitions) {
+        newStates.push([to, input, link]);
       }
 
       // are there any consuming transitions we can take?
@@ -77,8 +77,8 @@ export class Simulation implements Component {
       const [char, rest] = [input[0], input.slice(1)];
 
       const charTransitions = this.#findTransition(state, char);
-      for (const to of charTransitions) {
-        newStates.push([to, rest]);
+      for (const [to, link] of charTransitions) {
+        newStates.push([to, rest, link]);
       }
     }
 
