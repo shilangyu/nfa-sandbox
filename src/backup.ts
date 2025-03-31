@@ -84,7 +84,7 @@ export const createBackup = (state: State) => {
   return backup;
 };
 
-const localStorageKey = "fsm:v1";
+const localStorageKey = "fsm:v2";
 
 export const saveBackup = (state: State) => {
   localStorage[localStorageKey] = JSON.stringify(createBackup(state));

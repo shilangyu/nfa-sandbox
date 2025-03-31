@@ -148,19 +148,19 @@ sandbox.addEventListener("mousemove", function (e) {
     } else {
       if (targetNode === state.selectedObject) {
         state.setCurrentLink(new SelfLink(state.selectedObject, mouse));
-      }
-
-      if (!(state.selectedObject instanceof Node)) {
-        console.error("selectedObject should be a Node");
-        return;
-      }
-
-      if (targetNode !== undefined) {
-        state.setCurrentLink(new Link(state.selectedObject, targetNode));
       } else {
-        state.setCurrentLink(
-          new TemporaryLink(state.selectedObject.closestPointOnCircle(mouse.x, mouse.y), mouse),
-        );
+        if (!(state.selectedObject instanceof Node)) {
+          console.error("selectedObject should be a Node");
+          return;
+        }
+
+        if (targetNode !== undefined) {
+          state.setCurrentLink(new Link(state.selectedObject, targetNode));
+        } else {
+          state.setCurrentLink(
+            new TemporaryLink(state.selectedObject.closestPointOnCircle(mouse.x, mouse.y), mouse),
+          );
+        }
       }
     }
     draw();
