@@ -56,9 +56,13 @@ const draw = () => {
         break;
       case "accept":
         simulationStateAccept.style.visibility = "visible";
+        simulationStep.disabled = true;
+        simulationFully.disabled = true;
         break;
       case "reject":
         simulationStateReject.style.visibility = "visible";
+        simulationStep.disabled = true;
+        simulationFully.disabled = true;
         break;
     }
   }
@@ -88,6 +92,13 @@ const onResize = () => {
 window.addEventListener("resize", onResize);
 
 onResize();
+
+simulationInput.addEventListener("input", () => {
+  state.resetSimulation();
+  simulationStep.disabled = false;
+  simulationFully.disabled = false;
+  draw();
+});
 
 let movedObject: FinalizedLink | Node | undefined = undefined;
 let originalClick: Point | undefined = undefined;

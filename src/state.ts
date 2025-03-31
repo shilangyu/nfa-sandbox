@@ -134,4 +134,8 @@ export class State {
 
     c.restore();
   };
+
+  resetSimulation = () => {
+    this.simulation = undefined;
+  };
 }
