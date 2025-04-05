@@ -43,6 +43,7 @@ export class State {
 
   addNode = (node: Node) => {
     this.nodes.push(node);
+    this.resetSimulation();
   };
 
   setCurrentLink = (link: WorkLink) => {
@@ -57,6 +58,7 @@ export class State {
       }
       this.links.push(this.currentLink);
       this.selectObject(this.currentLink);
+      this.resetSimulation();
     }
     this.currentLink = undefined;
   };
@@ -96,6 +98,7 @@ export class State {
     }
 
     this.selectedObject = undefined;
+    this.resetSimulation();
   };
 
   draw = (c: DrawingContext, time: number, hasFocus: boolean) => {

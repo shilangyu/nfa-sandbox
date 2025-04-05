@@ -14,7 +14,6 @@ import { Point } from "./utils";
 
 // TODO: work better in dark mode
 // TODO: change cursor when dragging
-// TODO: reset simulation on any addition/removal of link/node. Or allow continuation but simulation has to be rebuilt
 
 const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
 const simulationStep = document.querySelector<HTMLButtonElement>("#simulation-step")!;
