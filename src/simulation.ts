@@ -1,4 +1,4 @@
-import { Component, DrawingContext } from "./components/component";
+import { DrawingContext } from "./components/component";
 import { drawText } from "./components/drawing";
 import { Link } from "./components/link";
 import { Node } from "./components/node";
@@ -12,8 +12,9 @@ export type SimulationState = "running" | SimulationFinalState;
 
 const epsilon: unique symbol = Symbol("ε");
 
-export class Simulation implements Component {
+export class Simulation {
   private states: [Node, string[], FinalizedLink][];
+  #stepTime: number | undefined = undefined;
 
   constructor(
     private state: State,
@@ -61,6 +62,8 @@ export class Simulation implements Component {
   };
 
   simulateStep = () => {
+    this.#stepTime = undefined;
+
     const newStates: typeof this.states = [];
 
     for (const [state, input] of this.states) {
@@ -98,6 +101,7 @@ export class Simulation implements Component {
   simulateTillEnd = (): SimulationFinalState => {
     let state = this.getCurrentSimulationState();
     while (state === "running") {
+      // TODO: automaton can have an infinite loop. Termination is decidable and computable for NFAs
       this.simulateStep();
       state = this.getCurrentSimulationState();
     }
@@ -105,18 +109,25 @@ export class Simulation implements Component {
     return state;
   };
 
-  draw = (c: DrawingContext) => {
+  draw = (c: DrawingContext, time: number) => {
+    if (this.#stepTime === undefined) {
+      this.#stepTime = time;
+    }
+    const animationTimeMs = 300;
+    const animationProgress = Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs));
     // group by nodes
-    const groupedStates = new Map<Node, string[][]>();
+    const groupedStates = new Map<Node, [FinalizedLink, string[]][]>();
 
-    for (const [node, input] of this.states) {
-      groupedStates.set(node, [...(groupedStates.get(node) ?? []), input]);
+    for (const [node, input, link] of this.states) {
+      groupedStates.set(node, [...(groupedStates.get(node) ?? []), [link, input]]);
     }
 
-    for (const [node, inputs] of groupedStates) {
-      // TODO: show it better and more visible that it is the simulation
-      const text = inputs.map((input) => input.join("")).join(", ");
-      drawText(c, text, node.x, node.y - Node.radius * 1.5, undefined, false, false);
+    for (const [, inputs] of groupedStates) {
+      for (const [link, input] of inputs) {
+        const { x, y } = link.tween(animationProgress);
+        // TODO: show it better and more visible that it is the simulation
+        drawText(c, input.join(""), x, y, undefined, false, false);
+      }
     }
   };
 }

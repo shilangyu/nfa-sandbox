@@ -128,7 +128,7 @@ export class State {
 
     if (this.simulation !== undefined) {
       c.save();
-      this.simulation.draw(c);
+      this.simulation.draw(c, time);
       c.restore();
     }
 
@@ -137,5 +137,13 @@ export class State {
 
   resetSimulation = () => {
     this.simulation = undefined;
+  };
+
+  simulateStep = (input: string[]) => {
+    if (this.simulation === undefined) {
+      this.simulation = new Simulation(this, input);
+    } else {
+      this.simulation.simulateStep();
+    }
   };
 }
