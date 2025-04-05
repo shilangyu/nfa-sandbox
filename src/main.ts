@@ -18,7 +18,6 @@ import { Point } from "./utils";
 
 const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
 const simulationStep = document.querySelector<HTMLButtonElement>("#simulation-step")!;
-const simulationFully = document.querySelector<HTMLButtonElement>("#simulation-fully")!;
 const simulationStateRunning = document.querySelector<HTMLDivElement>(
   "#simulation-state > .progress",
 )!;
@@ -60,12 +59,10 @@ window.requestAnimationFrame((zero) => {
         case "accept":
           simulationStateAccept.style.visibility = "visible";
           simulationStep.disabled = true;
-          simulationFully.disabled = true;
           break;
         case "reject":
           simulationStateReject.style.visibility = "visible";
           simulationStep.disabled = true;
-          simulationFully.disabled = true;
           break;
       }
     }
@@ -101,18 +98,12 @@ onResize();
 simulationInput.addEventListener("input", () => {
   state.resetSimulation();
   simulationStep.disabled = false;
-  simulationFully.disabled = false;
 });
 
 simulationStep.addEventListener("click", () => {
   // TODO: this is a bad way to create letters. We did not restrict links to accept single-character strings
   const input = simulationInput.value.split("");
   state.simulateStep(input);
-});
-
-simulationFully.addEventListener("click", () => {
-  // TODO: simulation till the end
-  alert("not yet implemented");
 });
 
 let movedObject: FinalizedLink | Node | undefined = undefined;

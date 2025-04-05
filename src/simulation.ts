@@ -51,12 +51,12 @@ export class Simulation {
   #deduplicateStates = (states: [Node, string[], FinalizedLink][]) => {
     const deduplicatedStates: [Node, string[], FinalizedLink][] = [];
 
-    for (const [state, input, link] of states) {
+    for (const [node, input, link] of states) {
       const existing = deduplicatedStates.some(
-        ([s, i, l]) => s === state && shallowArrayEquals(input, i) && l === link,
+        ([n, i, l]) => n === node && shallowArrayEquals(input, i) && l === link,
       );
       if (!existing) {
-        deduplicatedStates.push([state, input, link]);
+        deduplicatedStates.push([node, input, link]);
       }
     }
 
@@ -98,17 +98,6 @@ export class Simulation {
 
     // if there are still states to explore, we are still running
     return this.states.length === 0 ? "reject" : "running";
-  };
-
-  simulateTillEnd = (): SimulationFinalState => {
-    let state = this.getCurrentSimulationState();
-    while (state === "running") {
-      // TODO: automaton can have an infinite loop. Termination is decidable and computable for NFAs
-      this.simulateStep();
-      state = this.getCurrentSimulationState();
-    }
-
-    return state;
   };
 
   draw = (c: DrawingContext, time: number) => {
