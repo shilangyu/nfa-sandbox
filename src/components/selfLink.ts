@@ -17,6 +17,9 @@ export class SelfLink implements Component {
     }
   }
 
+  startNode = () => this.node;
+  endNode = () => this.node;
+
   setMoveStart(x: number, y: number): void {
     this.moveOffsetAngle = this.anchorAngle - Math.atan2(y - this.node.y, x - this.node.x);
   }

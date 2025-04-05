@@ -17,6 +17,9 @@ export class Link implements Component {
     this.nodeB = b;
   }
 
+  startNode = () => this.nodeA;
+  endNode = () => this.nodeB;
+
   getAnchorPoint() {
     const dx = this.nodeB.x - this.nodeA.x;
     const dy = this.nodeB.y - this.nodeA.y;

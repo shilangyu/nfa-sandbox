@@ -16,6 +16,9 @@ export class StartLink implements Component {
     }
   }
 
+  startNode = () => undefined;
+  endNode = () => this.node;
+
   setAnchorPoint(x: number, y: number, snapToPadding: number): void {
     this.deltaX = x - this.node.x;
     this.deltaY = y - this.node.y;

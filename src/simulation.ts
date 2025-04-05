@@ -5,7 +5,7 @@ import { Node } from "./components/node";
 import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { FinalizedLink, State } from "./state";
-import { shallowArrayEquals } from "./utils";
+import { easeInOutQuad, lineTween, shallowArrayEquals } from "./utils";
 
 export type SimulationFinalState = "accept" | "reject";
 export type SimulationState = "running" | SimulationFinalState;
@@ -113,8 +113,13 @@ export class Simulation {
     if (this.#stepTime === undefined) {
       this.#stepTime = time;
     }
-    const animationTimeMs = 1000;
-    const animationProgress = Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs));
+    const animationTimeMs = 2000;
+    const positioningFrac = 0.2;
+    console.assert(positioningFrac * 2 < 1, "positioningFrac must be less than 0.5");
+    const animationProgress = easeInOutQuad(
+      Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs)),
+    );
+    const overlapOffset = 15;
     // group by nodes
     const groupedStates = new Map<Node, [FinalizedLink, string[]][]>();
 
@@ -125,7 +130,38 @@ export class Simulation {
     for (const [, inputs] of groupedStates) {
       for (let i = 0; i < inputs.length; i++) {
         const [link, input] = inputs[i];
-        const { x, y } = link.tween(animationProgress, 15 * (i + 1));
+        const offset = overlapOffset * (i + 1);
+        const startNode = link.startNode();
+        const endNode = link.endNode();
+
+        const { x, y } = (() => {
+          if (animationProgress < positioningFrac && startNode !== undefined) {
+            // go from top of the node to the start of the arrow
+            const progress = animationProgress / positioningFrac;
+
+            return lineTween(
+              { x: startNode.x, y: startNode.y - (Node.radius + offset) },
+              link.tween(0, offset),
+              progress,
+            );
+          } else if (animationProgress > 1 - positioningFrac) {
+            // go from the end of the arrow to the top of the node
+            const progress = (animationProgress - (1 - positioningFrac)) / positioningFrac;
+            return lineTween(
+              link.tween(1, offset),
+              { x: endNode.x, y: endNode.y - (Node.radius + offset) },
+              progress,
+            );
+          } else {
+            // path on the link
+            const progress =
+              startNode === undefined
+                ? animationProgress / (1 - positioningFrac)
+                : (animationProgress - positioningFrac) / (1 - 2 * positioningFrac);
+            return link.tween(progress, offset);
+          }
+        })();
+
         // TODO: show it better and more visible that it is the simulation
         drawText(c, input.join(""), x, y, undefined, false, false);
       }
