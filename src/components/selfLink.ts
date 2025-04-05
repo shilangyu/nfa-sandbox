@@ -83,4 +83,13 @@ export class SelfLink implements Component {
     const distance = Math.sqrt(dx * dx + dy * dy) - stuff.circleRadius;
     return Math.abs(distance) < hitTargetPadding;
   }
+
+  tween = (fraction: number): Point => {
+    const stuff = this.getEndPointsAndCircle();
+    const angle = stuff.startAngle + fraction * (stuff.endAngle - stuff.startAngle);
+    const x = stuff.circleX + stuff.circleRadius * Math.cos(angle);
+    const y = stuff.circleY + stuff.circleRadius * Math.sin(angle);
+
+    return { x, y };
+  };
 }

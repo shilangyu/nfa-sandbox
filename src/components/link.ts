@@ -1,4 +1,4 @@
-import { circleFromThreePoints } from "../utils";
+import { circleFromThreePoints, Point } from "../utils";
 import { Component, DrawingContext } from "./component";
 import { drawArrow, drawText } from "./drawing";
 import { Node } from "./node";
@@ -213,4 +213,37 @@ export class Link implements Component {
 
     return false;
   }
+
+  tween = (fraction: number): Point => {
+    const stuff = this.getEndPointsAndCircle();
+    if (stuff.hasCircle) {
+      function getDeltaAngle(start: number, end: number, clockwise: boolean) {
+        let delta = end - start;
+        if (clockwise) {
+          if (delta > 0) {
+            delta -= 2 * Math.PI;
+          }
+        } else {
+          if (delta < 0) {
+            delta += 2 * Math.PI;
+          }
+        }
+        return delta;
+      }
+
+      const angle =
+        stuff.startAngle +
+        fraction * getDeltaAngle(stuff.startAngle, stuff.endAngle, stuff.isReversed);
+
+      const x = stuff.circleX + stuff.circleRadius * Math.cos(angle);
+      const y = stuff.circleY + stuff.circleRadius * Math.sin(angle);
+
+      return { x, y };
+    } else {
+      return {
+        x: stuff.startX + fraction * (stuff.endX - stuff.startX),
+        y: stuff.startY + fraction * (stuff.endY - stuff.startY),
+      };
+    }
+  };
 }

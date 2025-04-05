@@ -63,4 +63,11 @@ export class StartLink implements Component {
     const distance = (dx * (y - stuff.startY) - dy * (x - stuff.startX)) / length;
     return percent > 0 && percent < 1 && Math.abs(distance) < hitTargetPadding;
   }
+
+  tween = (fraction: number): Point => {
+    const stuff = this.getEndPoints();
+    const x = stuff.startX + fraction * (stuff.endX - stuff.startX);
+    const y = stuff.startY + fraction * (stuff.endY - stuff.startY);
+    return { x, y };
+  };
 }
