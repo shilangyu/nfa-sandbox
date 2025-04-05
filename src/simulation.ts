@@ -113,13 +113,16 @@ export class Simulation {
     if (this.#stepTime === undefined) {
       this.#stepTime = time;
     }
-    const animationTimeMs = 2000;
+    const animationTimeMs = 3000;
     const positioningFrac = 0.2;
+    const startConsumingTokenFrac = 0.3;
     console.assert(positioningFrac * 2 < 1, "positioningFrac must be less than 0.5");
     const animationProgress = easeInOutQuad(
       Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs)),
     );
-    const overlapOffset = 15;
+    const fontSize = 30;
+    const overlapOffset = fontSize * 0.6;
+    const familyFace = "IBM Plex Sans";
     // group by nodes
     const groupedStates = new Map<Node, [FinalizedLink, string[]][]>();
 
@@ -129,41 +132,121 @@ export class Simulation {
 
     for (const [, inputs] of groupedStates) {
       for (let i = 0; i < inputs.length; i++) {
-        const [link, input] = inputs[i];
+        const [link, inputRaw] = inputs[i];
+        const input = inputRaw.join("");
         const offset = overlapOffset * (i + 1);
         const startNode = link.startNode();
         const endNode = link.endNode();
+        const token = link.token() ?? "";
+        c.font = `${fontSize}px "${familyFace}"`;
+        const tokenWidth = c.measureText(token).width;
+        const inputWidth = c.measureText(input).width;
 
-        const { x, y } = (() => {
+        const { tokenPoint, inputPoint } = (() => {
           if (animationProgress < positioningFrac && startNode !== undefined) {
             // go from top of the node to the start of the arrow
             const progress = animationProgress / positioningFrac;
-
-            return lineTween(
+            const point = lineTween(
               { x: startNode.x, y: startNode.y - (Node.radius + offset) },
               link.tween(0, offset),
               progress,
             );
+
+            return {
+              tokenPoint: {
+                x: point.x - inputWidth / 2,
+                y: point.y,
+                angle: undefined,
+              },
+              inputPoint: {
+                x: point.x + tokenWidth / 2,
+                y: point.y,
+              },
+            };
           } else if (animationProgress > 1 - positioningFrac) {
             // go from the end of the arrow to the top of the node
             const progress = (animationProgress - (1 - positioningFrac)) / positioningFrac;
-            return lineTween(
+            const point = lineTween(
               link.tween(1, offset),
               { x: endNode.x, y: endNode.y - (Node.radius + offset) },
               progress,
             );
+
+            return {
+              tokenPoint: undefined,
+              inputPoint: point,
+            };
           } else {
             // path on the link
             const progress =
               startNode === undefined
                 ? animationProgress / (1 - positioningFrac)
                 : (animationProgress - positioningFrac) / (1 - 2 * positioningFrac);
-            return link.tween(progress, offset);
+
+            const point = link.tween(progress, offset);
+            const tokenPosition = link.tokenPosition();
+
+            if (progress < startConsumingTokenFrac || tokenPosition === undefined) {
+              // the token still follows the input
+              return {
+                tokenPoint: {
+                  x: point.x - inputWidth / 2,
+                  y: point.y,
+                  angle: undefined,
+                },
+                inputPoint: {
+                  x: point.x + tokenWidth / 2,
+                  y: point.y,
+                },
+              };
+            } else {
+              const tokenProgress =
+                (progress - startConsumingTokenFrac) / (1 - startConsumingTokenFrac);
+              const linkStartTokenPosition = link.tween(startConsumingTokenFrac, offset);
+
+              // the token merges with the link
+              const tokenPoint = lineTween(
+                { x: linkStartTokenPosition.x - inputWidth / 2, y: linkStartTokenPosition.y },
+                tokenPosition,
+                tokenProgress,
+              );
+
+              return {
+                tokenPoint: { ...tokenPoint, angle: tokenProgress * tokenPosition.angle },
+                inputPoint: {
+                  x: point.x + (1 - tokenProgress) * (tokenWidth / 2),
+                  y: point.y,
+                },
+              };
+            }
           }
         })();
 
         // TODO: show it better and more visible that it is the simulation
-        drawText(c, input.join(""), x, y, undefined, false, false);
+        if (tokenPoint) {
+          drawText(
+            c,
+            token,
+            tokenPoint.x,
+            tokenPoint.y,
+            tokenPoint.angle,
+            false,
+            false,
+            fontSize,
+            familyFace,
+          );
+        }
+        drawText(
+          c,
+          input,
+          inputPoint.x,
+          inputPoint.y,
+          undefined,
+          false,
+          false,
+          fontSize,
+          familyFace,
+        );
       }
     }
   };

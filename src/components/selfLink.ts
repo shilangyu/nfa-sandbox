@@ -19,6 +19,13 @@ export class SelfLink implements Component {
 
   startNode = () => this.node;
   endNode = () => this.node;
+  token = () => this.text;
+  tokenPosition = () => {
+    const stuff = this.getEndPointsAndCircle();
+    const textX = stuff.circleX + stuff.circleRadius * Math.cos(this.anchorAngle);
+    const textY = stuff.circleY + stuff.circleRadius * Math.sin(this.anchorAngle);
+    return { x: textX, y: textY, angle: this.anchorAngle };
+  };
 
   setMoveStart(x: number, y: number): void {
     this.moveOffsetAngle = this.anchorAngle - Math.atan2(y - this.node.y, x - this.node.x);
@@ -72,9 +79,8 @@ export class SelfLink implements Component {
     );
     c.stroke();
     // draw the text on the loop farthest from the node
-    const textX = stuff.circleX + stuff.circleRadius * Math.cos(this.anchorAngle);
-    const textY = stuff.circleY + stuff.circleRadius * Math.sin(this.anchorAngle);
-    drawText(c, this.text, textX, textY, this.anchorAngle, isSelected, hasFocus);
+    const text = this.tokenPosition();
+    drawText(c, this.text, text.x, text.y, text.angle, isSelected, hasFocus);
     // draw the head of the arrow
     drawArrow(c, stuff.endX, stuff.endY, stuff.endAngle + Math.PI * 0.4);
   }

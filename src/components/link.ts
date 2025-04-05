@@ -19,6 +19,27 @@ export class Link implements Component {
 
   startNode = () => this.nodeA;
   endNode = () => this.nodeB;
+  token = () => this.text;
+  tokenPosition = () => {
+    const stuff = this.getEndPointsAndCircle();
+
+    if (stuff.hasCircle) {
+      let startAngle = stuff.startAngle;
+      let endAngle = stuff.endAngle;
+      if (endAngle < startAngle) {
+        endAngle += Math.PI * 2;
+      }
+      const textAngle = (startAngle + endAngle) / 2 + (stuff.isReversed ? 1 : 0) * Math.PI;
+      const textX = stuff.circleX + stuff.circleRadius * Math.cos(textAngle);
+      const textY = stuff.circleY + stuff.circleRadius * Math.sin(textAngle);
+      return { x: textX, y: textY, angle: textAngle };
+    } else {
+      const textX = (stuff.startX + stuff.endX) / 2;
+      const textY = (stuff.startY + stuff.endY) / 2;
+      const textAngle = Math.atan2(stuff.endX - stuff.startX, stuff.startY - stuff.endY);
+      return { x: textX, y: textY, angle: textAngle + this.lineAngleAdjust };
+    }
+  };
 
   getAnchorPoint() {
     const dx = this.nodeB.x - this.nodeA.x;
@@ -155,22 +176,8 @@ export class Link implements Component {
     }
 
     // draw the text
-    if (stuff.hasCircle) {
-      let startAngle = stuff.startAngle;
-      let endAngle = stuff.endAngle;
-      if (endAngle < startAngle) {
-        endAngle += Math.PI * 2;
-      }
-      const textAngle = (startAngle + endAngle) / 2 + (stuff.isReversed ? 1 : 0) * Math.PI;
-      const textX = stuff.circleX + stuff.circleRadius * Math.cos(textAngle);
-      const textY = stuff.circleY + stuff.circleRadius * Math.sin(textAngle);
-      drawText(c, this.text, textX, textY, textAngle, isSelected, hasFocus);
-    } else {
-      const textX = (stuff.startX + stuff.endX) / 2;
-      const textY = (stuff.startY + stuff.endY) / 2;
-      const textAngle = Math.atan2(stuff.endX - stuff.startX, stuff.startY - stuff.endY);
-      drawText(c, this.text, textX, textY, textAngle + this.lineAngleAdjust, isSelected, hasFocus);
-    }
+    const { x: textX, y: textY, angle: textAngle } = this.tokenPosition();
+    drawText(c, this.text, textX, textY, textAngle, isSelected, hasFocus);
   }
 
   containsPoint(x: number, y: number, hitTargetPadding: number): boolean {

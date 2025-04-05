@@ -18,6 +18,8 @@ export function drawText(
   angle: number | undefined,
   isSelected: boolean,
   hasFocus: boolean,
+  fontSize = 20,
+  family = "IBM Plex Sans",
 ) {
   const greekLetterNames = [
     "Alpha",
@@ -69,7 +71,7 @@ export function drawText(
   }
 
   let text = convertLatexShortcuts(originalText);
-  c.font = '20px "IBM Plex Sans"';
+  c.font = `${fontSize}px "${family}"`;
   const width = c.measureText(text).width;
 
   // center the text
