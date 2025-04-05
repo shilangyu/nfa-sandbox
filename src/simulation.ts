@@ -111,23 +111,24 @@ export class Simulation {
     const overlapOffset = fontSize * 0.6;
     const familyFace = "IBM Plex Sans";
 
-    // assign indexes for states grouped by node+input and links
+    // TODO: indices are not stable across simulation steps
+    // assign indexes for states grouped by node and links
     const counters = new Map<Node | FinalizedLink, number>();
     for (const state of this.states) {
       const [inputRaw, link] = state;
-      const node = link.endNode();
+      const startNode = link.startNode();
+      const endNode = link.endNode();
 
       // get indices
-      const nodeCounter = counters.get(node) ?? 0;
+      // TODO: indices should be separate for end and start
+      const nodeCounter = counters.get(endNode) ?? 0;
       const linkCounter = counters.get(link) ?? 0;
-      counters.set(node, nodeCounter + 1);
+      counters.set(endNode, nodeCounter + 1);
       counters.set(link, linkCounter + 1);
       const nodeOffset = (1 + nodeCounter) * overlapOffset;
       const linkOffset = (1 + linkCounter) * overlapOffset;
 
       const input = inputRaw.join("");
-      const startNode = link.startNode();
-      const endNode = link.endNode();
       const token = link.token() ?? "";
       c.font = `${fontSize}px "${familyFace}"`;
       const tokenWidth = c.measureText(token).width;
