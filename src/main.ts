@@ -37,39 +37,45 @@ const canvasHasFocus = () => {
   return (document.activeElement ?? document.body) === document.body;
 };
 
-const drawWith = (c: DrawingContext) => {
+const drawWith = (c: DrawingContext, time?: number) => {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
-  state.draw(c, hasFocus);
+  state.draw(c, time ?? 0, hasFocus);
 };
 
-const draw = () => {
-  drawWith(c);
+window.requestAnimationFrame((zero) => {
+  const draw = (timestamp: DOMHighResTimeStamp) => {
+    const time = timestamp - zero;
+    drawWith(c, time);
 
-  simulationStateRunning.style.visibility = "hidden";
-  simulationStateAccept.style.visibility = "hidden";
-  simulationStateReject.style.visibility = "hidden";
-  if (state.simulation !== undefined) {
-    const simulationState = state.simulation.getCurrentSimulationState();
-    switch (simulationState) {
-      case "running":
-        simulationStateRunning.style.visibility = "visible";
-        break;
-      case "accept":
-        simulationStateAccept.style.visibility = "visible";
-        simulationStep.disabled = true;
-        simulationFully.disabled = true;
-        break;
-      case "reject":
-        simulationStateReject.style.visibility = "visible";
-        simulationStep.disabled = true;
-        simulationFully.disabled = true;
-        break;
+    simulationStateRunning.style.visibility = "hidden";
+    simulationStateAccept.style.visibility = "hidden";
+    simulationStateReject.style.visibility = "hidden";
+    if (state.simulation !== undefined) {
+      const simulationState = state.simulation.getCurrentSimulationState();
+      switch (simulationState) {
+        case "running":
+          simulationStateRunning.style.visibility = "visible";
+          break;
+        case "accept":
+          simulationStateAccept.style.visibility = "visible";
+          simulationStep.disabled = true;
+          simulationFully.disabled = true;
+          break;
+        case "reject":
+          simulationStateReject.style.visibility = "visible";
+          simulationStep.disabled = true;
+          simulationFully.disabled = true;
+          break;
+      }
     }
-  }
 
-  saveBackup(state);
-};
+    saveBackup(state);
+    window.requestAnimationFrame(draw);
+  };
+
+  draw(zero);
+});
 
 const onResize = () => {
   const dpr = window.devicePixelRatio;
@@ -85,8 +91,6 @@ const onResize = () => {
   // Set the "drawn" size of the canvas
   sandbox.style.width = `${rect.width}px`;
   sandbox.style.height = `${rect.height}px`;
-
-  draw();
 };
 
 // TODO: does not work properly
@@ -114,7 +118,6 @@ const saveWith = async (exporter: DrawingContext) => {
   a.download = "export";
   a.click();
   URL.revokeObjectURL(url);
-  draw();
 };
 
 document
@@ -138,7 +141,6 @@ sandbox.addEventListener("dblclick", function (e) {
   } else if (state.selectedObject instanceof Node) {
     state.selectedObject.toggleAcceptState();
   }
-  draw();
 });
 
 sandbox.addEventListener("mousedown", function (e) {
@@ -160,8 +162,6 @@ sandbox.addEventListener("mousedown", function (e) {
   } else if (e.shiftKey) {
     state.setCurrentLink(new TemporaryLink(mouse, mouse));
   }
-
-  draw();
 
   if (canvasHasFocus()) {
     // disable drag-and-drop only if the canvas is already focused
@@ -208,7 +208,6 @@ sandbox.addEventListener("mousemove", function (e) {
         }
       }
     }
-    draw();
   }
 
   if (movedObject) {
@@ -216,7 +215,6 @@ sandbox.addEventListener("mousemove", function (e) {
     if (state.selectedObject instanceof Node) {
       state.snapNode(state.selectedObject);
     }
-    draw();
   }
 });
 
@@ -224,7 +222,6 @@ sandbox.addEventListener("mouseup", () => {
   movedObject = undefined;
 
   state.upgradeCurrentLink();
-  draw();
 });
 
 document.addEventListener("keydown", (e) => {
@@ -235,7 +232,6 @@ document.addEventListener("keydown", (e) => {
     // backspace key
     if (state.selectedObject !== undefined && "text" in state.selectedObject) {
       state.selectedObject.text = state.selectedObject.text.slice(0, -1);
-      draw();
     }
 
     // backspace is a shortcut for the back button, but do NOT want to change pages
@@ -244,7 +240,6 @@ document.addEventListener("keydown", (e) => {
     // delete key
     if (state.selectedObject !== undefined) {
       state.removeSelectedObject();
-      draw();
     }
   }
 });
@@ -266,7 +261,6 @@ document.addEventListener("keydown", function (e) {
     "text" in state.selectedObject
   ) {
     state.selectedObject.text += e.key;
-    draw();
 
     // don't let keys do their actions (like space scrolls down the page)
     return false;

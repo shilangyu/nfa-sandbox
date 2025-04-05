@@ -98,7 +98,7 @@ export class State {
     this.selectedObject = undefined;
   };
 
-  draw = (c: DrawingContext, hasFocus: boolean) => {
+  draw = (c: DrawingContext, time: number, hasFocus: boolean) => {
     c.save();
     c.translate(0.5, 0.5);
 
