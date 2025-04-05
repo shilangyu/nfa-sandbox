@@ -47,3 +47,20 @@ export const circleFromThreePoints = (
 export const fixed = (number: number, digits: number) => {
   return number.toFixed(digits).replace(/0+$/, "").replace(/\.$/, "");
 };
+
+export const lineParallel = (
+  start: Point,
+  end: Point,
+  distance: number,
+): { start: Point; end: Point } => {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.sqrt(dx * dx + dy * dy);
+  const nx = (dx * distance) / length;
+  const ny = (dy * distance) / length;
+
+  return {
+    start: { x: start.x + ny, y: start.y - nx },
+    end: { x: end.x + ny, y: end.y - nx },
+  };
+};

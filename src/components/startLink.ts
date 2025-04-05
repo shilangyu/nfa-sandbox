@@ -1,4 +1,4 @@
-import { Point } from "../utils";
+import { lineParallel, Point } from "../utils";
 import { Component, DrawingContext } from "./component";
 import { drawArrow } from "./drawing";
 import { Node } from "./node";
@@ -64,10 +64,16 @@ export class StartLink implements Component {
     return percent > 0 && percent < 1 && Math.abs(distance) < hitTargetPadding;
   }
 
-  tween = (fraction: number): Point => {
+  tween = (fraction: number, offset: number): Point => {
     const stuff = this.getEndPoints();
-    const x = stuff.startX + fraction * (stuff.endX - stuff.startX);
-    const y = stuff.startY + fraction * (stuff.endY - stuff.startY);
+    const { start, end } = lineParallel(
+      { x: stuff.startX, y: stuff.startY },
+      { x: stuff.endX, y: stuff.endY },
+      offset,
+    );
+
+    const x = start.x + fraction * (end.x - start.x);
+    const y = start.y + fraction * (end.y - start.y);
     return { x, y };
   };
 }

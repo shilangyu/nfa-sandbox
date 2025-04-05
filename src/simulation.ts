@@ -113,7 +113,7 @@ export class Simulation {
     if (this.#stepTime === undefined) {
       this.#stepTime = time;
     }
-    const animationTimeMs = 300;
+    const animationTimeMs = 1000;
     const animationProgress = Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs));
     // group by nodes
     const groupedStates = new Map<Node, [FinalizedLink, string[]][]>();
@@ -123,8 +123,9 @@ export class Simulation {
     }
 
     for (const [, inputs] of groupedStates) {
-      for (const [link, input] of inputs) {
-        const { x, y } = link.tween(animationProgress);
+      for (let i = 0; i < inputs.length; i++) {
+        const [link, input] = inputs[i];
+        const { x, y } = link.tween(animationProgress, 15 * (i + 1));
         // TODO: show it better and more visible that it is the simulation
         drawText(c, input.join(""), x, y, undefined, false, false);
       }
