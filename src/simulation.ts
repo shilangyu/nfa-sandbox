@@ -96,6 +96,7 @@ export class Simulation {
     return this.states.length === 0 ? "reject" : "running";
   };
 
+  // TODO: animation of empty inputs is invisible
   draw = (c: DrawingContext, time: number) => {
     if (this.#stepTime === undefined) {
       this.#stepTime = time;
