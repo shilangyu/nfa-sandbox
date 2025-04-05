@@ -12,7 +12,7 @@ export type SimulationState = "running" | SimulationFinalState;
 
 const epsilon: unique symbol = Symbol("ε");
 
-type CurrentState = [Node, string[], FinalizedLink];
+type CurrentState = [string[], FinalizedLink];
 
 export class Simulation {
   private states: CurrentState[];
@@ -24,39 +24,35 @@ export class Simulation {
   ) {
     this.states = state.links
       .filter((link) => link instanceof StartLink)
-      .map((link) => [link.node, input, link]);
+      .map((link) => [input, link]);
   }
 
-  #findTransition = (state: Node, input: string | typeof epsilon): [Node, FinalizedLink][] => {
+  #findTransition = (node: Node, input: string | typeof epsilon): FinalizedLink[] => {
     const letter = input === epsilon ? "" : input;
 
     return this.state.links
-      .map((link): [Node, FinalizedLink] | undefined => {
+      .map((link): FinalizedLink | undefined => {
         if (link instanceof StartLink) return undefined;
         else if (link instanceof SelfLink) {
-          if (link.node === state && link.text === letter) return [link.node, link];
+          if (link.node === node && link.text === letter) return link;
           else return undefined;
         } else if (link instanceof Link) {
-          if (link.nodeA === state && link.text === letter) return [link.nodeB, link];
+          if (link.nodeA === node && link.text === letter) return link;
           else return undefined;
         } else link satisfies never;
       })
       .filter((link) => link !== undefined);
   };
 
-  #isAccepting = (state: Node) => {
-    return this.state.nodes.some((node) => node.isAcceptState && node === state);
-  };
+  #deduplicateStates = (states: CurrentState[]) => {
+    const deduplicatedStates: CurrentState[] = [];
 
-  #deduplicateStates = (states: [Node, string[], FinalizedLink][]) => {
-    const deduplicatedStates: [Node, string[], FinalizedLink][] = [];
-
-    for (const [node, input, link] of states) {
+    for (const [input, link] of states) {
       const existing = deduplicatedStates.some(
-        ([n, i, l]) => n === node && shallowArrayEquals(input, i) && l === link,
+        ([i, l]) => shallowArrayEquals(input, i) && l === link,
       );
       if (!existing) {
-        deduplicatedStates.push([node, input, link]);
+        deduplicatedStates.push([input, link]);
       }
     }
 
@@ -66,14 +62,14 @@ export class Simulation {
   simulateStep = () => {
     this.#stepTime = undefined;
 
-    const newStates: typeof this.states = [];
+    const newStates: CurrentState[] = [];
 
-    for (const [state, input] of this.states) {
+    for (const [input, link] of this.states) {
       // are there any epsilon transitions?
-      const epsilonTransitions = this.#findTransition(state, epsilon);
+      const epsilonTransitions = this.#findTransition(link.endNode(), epsilon);
       // we can get there without consuming input
-      for (const [to, link] of epsilonTransitions) {
-        newStates.push([to, input, link]);
+      for (const link of epsilonTransitions) {
+        newStates.push([input, link]);
       }
 
       // are there any consuming transitions we can take?
@@ -81,9 +77,9 @@ export class Simulation {
 
       const [char, rest] = [input[0], input.slice(1)];
 
-      const charTransitions = this.#findTransition(state, char);
-      for (const [to, link] of charTransitions) {
-        newStates.push([to, rest, link]);
+      const charTransitions = this.#findTransition(link.endNode(), char);
+      for (const link of charTransitions) {
+        newStates.push([rest, link]);
       }
     }
 
@@ -92,7 +88,7 @@ export class Simulation {
 
   getCurrentSimulationState = (): SimulationState => {
     // a state is accepting if we are in an accepting state and there is no more input
-    if (this.states.some(([state, input]) => this.#isAccepting(state) && input.length === 0)) {
+    if (this.states.some(([input, link]) => link.endNode().isAcceptState && input.length === 0)) {
       return "accept";
     }
 
@@ -115,10 +111,11 @@ export class Simulation {
     const overlapOffset = fontSize * 0.6;
     const familyFace = "IBM Plex Sans";
 
-    // assign indexes for states grouped by nodes and links
+    // assign indexes for states grouped by node+input and links
     const counters = new Map<Node | FinalizedLink, number>();
     for (const state of this.states) {
-      const [node, inputRaw, link] = state;
+      const [inputRaw, link] = state;
+      const node = link.endNode();
 
       // get indices
       const nodeCounter = counters.get(node) ?? 0;
