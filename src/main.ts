@@ -49,6 +49,7 @@ window.requestAnimationFrame((zero) => {
     simulationStateRunning.style.visibility = "hidden";
     simulationStateAccept.style.visibility = "hidden";
     simulationStateReject.style.visibility = "hidden";
+    simulationStep.disabled = false;
     if (state.simulation !== undefined) {
       const simulationState = state.simulation.getCurrentSimulationState();
       switch (simulationState) {
@@ -96,7 +97,6 @@ onResize();
 
 simulationInput.addEventListener("input", () => {
   state.resetSimulation();
-  simulationStep.disabled = false;
 });
 
 simulationStep.addEventListener("click", () => {

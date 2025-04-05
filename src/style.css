@@ -39,8 +39,9 @@ h1 {
   line-height: 1.1;
 }
 
-.column {
+.row {
   display: flex;
+  flex-direction: row;
 }
 
 #sandbox {
