@@ -12,7 +12,6 @@ import { FinalizedLink, State } from "./state";
 import "./style.css";
 import { Point } from "./utils";
 
-// TODO: work better in dark mode
 // TODO: change cursor when dragging
 
 const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
@@ -38,7 +37,7 @@ const canvasHasFocus = () => {
 const drawWith = (c: DrawingContext, time?: number) => {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
-  state.draw(c, time ?? 0, hasFocus);
+  state.draw(c, time ?? 0, hasFocus, window.matchMedia("(prefers-color-scheme: dark)").matches);
 };
 
 window.requestAnimationFrame((zero) => {

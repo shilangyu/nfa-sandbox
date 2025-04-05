@@ -101,15 +101,17 @@ export class State {
     this.resetSimulation();
   };
 
-  draw = (c: DrawingContext, time: number, hasFocus: boolean) => {
+  draw = (c: DrawingContext, time: number, hasFocus: boolean, darkMode: boolean) => {
     c.save();
     c.translate(0.5, 0.5);
+
+    const strokeColor = darkMode ? "white" : "black";
 
     for (const node of this.nodes) {
       c.save();
       const isSelected = node === this.selectedObject;
       c.lineWidth = 1;
-      c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
+      c.fillStyle = c.strokeStyle = isSelected ? "blue" : strokeColor;
       node.draw(c, hasFocus, isSelected);
       c.restore();
     }
@@ -117,20 +119,21 @@ export class State {
       c.save();
       const isSelected = link === this.selectedObject;
       c.lineWidth = 1;
-      c.fillStyle = c.strokeStyle = isSelected ? "blue" : "black";
+      c.fillStyle = c.strokeStyle = isSelected ? "blue" : strokeColor;
       link.draw(c, hasFocus, isSelected);
       c.restore();
     }
     if (this.currentLink !== undefined) {
       c.save();
       c.lineWidth = 1;
-      c.fillStyle = c.strokeStyle = "black";
+      c.fillStyle = c.strokeStyle = strokeColor;
       this.currentLink.draw(c, hasFocus, false);
       c.restore();
     }
 
     if (this.simulation !== undefined) {
       c.save();
+      c.fillStyle = c.strokeStyle = strokeColor;
       this.simulation.draw(c, time);
       c.restore();
     }
