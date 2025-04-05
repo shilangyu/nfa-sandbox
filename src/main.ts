@@ -102,7 +102,17 @@ simulationInput.addEventListener("input", () => {
   state.resetSimulation();
   simulationStep.disabled = false;
   simulationFully.disabled = false;
-  draw();
+});
+
+simulationStep.addEventListener("click", () => {
+  // TODO: this is a bad way to create letters. We did not restrict links to accept single-character strings
+  const input = simulationInput.value.split("");
+  state.simulateStep(input);
+});
+
+simulationFully.addEventListener("click", () => {
+  // TODO: simulation till the end
+  alert("not yet implemented");
 });
 
 let movedObject: FinalizedLink | Node | undefined = undefined;
@@ -110,6 +120,7 @@ let originalClick: Point | undefined = undefined;
 
 const saveWith = async (exporter: DrawingContext) => {
   state.selectObject(undefined);
+  state.resetSimulation();
   drawWith(exporter);
   const blob = await exporter.export();
   const url = URL.createObjectURL(blob);
