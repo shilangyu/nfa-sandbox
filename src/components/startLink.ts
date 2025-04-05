@@ -1,4 +1,4 @@
-import { lineParallel, Point } from "../utils";
+import { lineParallel, lineTween, Point } from "../utils";
 import { Component, DrawingContext } from "./component";
 import { drawArrow } from "./drawing";
 import { Node } from "./node";
@@ -72,8 +72,6 @@ export class StartLink implements Component {
       offset,
     );
 
-    const x = start.x + fraction * (end.x - start.x);
-    const y = start.y + fraction * (end.y - start.y);
-    return { x, y };
+    return lineTween(start, end, fraction);
   };
 }

@@ -1,4 +1,4 @@
-import { Point } from "../utils";
+import { arcTween, Point } from "../utils";
 import { Component, DrawingContext } from "./component";
 import { drawArrow, drawText } from "./drawing";
 import { Node } from "./node";
@@ -86,11 +86,13 @@ export class SelfLink implements Component {
 
   tween = (fraction: number, offset: number): Point => {
     const stuff = this.getEndPointsAndCircle();
-    const radius = stuff.circleRadius + offset;
-    const angle = stuff.startAngle + fraction * (stuff.endAngle - stuff.startAngle);
-    const x = stuff.circleX + radius * Math.cos(angle);
-    const y = stuff.circleY + radius * Math.sin(angle);
-
-    return { x, y };
+    return arcTween(
+      stuff.startAngle,
+      stuff.endAngle,
+      stuff.circleRadius + offset,
+      { x: stuff.circleX, y: stuff.circleY },
+      false,
+      fraction,
+    );
   };
 }

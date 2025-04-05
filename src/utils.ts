@@ -64,3 +64,38 @@ export const lineParallel = (
     end: { x: end.x + ny, y: end.y - nx },
   };
 };
+
+export const lineTween = (start: Point, end: Point, fraction: number) => ({
+  x: start.x + fraction * (end.x - start.x),
+  y: start.y + fraction * (end.y - start.y),
+});
+
+export const arcTween = (
+  startAngle: number,
+  endAngle: number,
+  radius: number,
+  circle: Point,
+  clockwise: boolean,
+  fraction: number,
+) => {
+  function getDeltaAngle(start: number, end: number, clockwise: boolean) {
+    let delta = end - start;
+    if (clockwise) {
+      if (delta > 0) {
+        delta -= 2 * Math.PI;
+      }
+    } else {
+      if (delta < 0) {
+        delta += 2 * Math.PI;
+      }
+    }
+    return delta;
+  }
+
+  const angle = startAngle + fraction * getDeltaAngle(startAngle, endAngle, clockwise);
+
+  const x = circle.x + radius * Math.cos(angle);
+  const y = circle.y + radius * Math.sin(angle);
+
+  return { x, y };
+};

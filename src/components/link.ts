@@ -1,4 +1,4 @@
-import { circleFromThreePoints, lineParallel, Point } from "../utils";
+import { arcTween, circleFromThreePoints, lineParallel, lineTween, Point } from "../utils";
 import { Component, DrawingContext } from "./component";
 import { drawArrow, drawText } from "./drawing";
 import { Node } from "./node";
@@ -217,39 +217,22 @@ export class Link implements Component {
   tween = (fraction: number, offset: number): Point => {
     const stuff = this.getEndPointsAndCircle();
     if (stuff.hasCircle) {
-      function getDeltaAngle(start: number, end: number, clockwise: boolean) {
-        let delta = end - start;
-        if (clockwise) {
-          if (delta > 0) {
-            delta -= 2 * Math.PI;
-          }
-        } else {
-          if (delta < 0) {
-            delta += 2 * Math.PI;
-          }
-        }
-        return delta;
-      }
-
-      const angle =
-        stuff.startAngle +
-        fraction * getDeltaAngle(stuff.startAngle, stuff.endAngle, stuff.isReversed);
-
-      const radius = stuff.circleRadius + offset;
-
-      const x = stuff.circleX + radius * Math.cos(angle);
-      const y = stuff.circleY + radius * Math.sin(angle);
-
-      return { x, y };
+      return arcTween(
+        stuff.startAngle,
+        stuff.endAngle,
+        stuff.circleRadius + offset,
+        { x: stuff.circleX, y: stuff.circleY },
+        stuff.isReversed,
+        fraction,
+      );
     } else {
       const { start, end } = lineParallel(
         { x: stuff.startX, y: stuff.startY },
         { x: stuff.endX, y: stuff.endY },
         offset,
       );
-      const x = start.x + fraction * (end.x - start.x);
-      const y = start.y + fraction * (end.y - start.y);
-      return { x, y };
+
+      return lineTween(start, end, fraction);
     }
   };
 }
