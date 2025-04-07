@@ -12,7 +12,16 @@ export type SimulationState = "running" | SimulationFinalState;
 
 const epsilon: unique symbol = Symbol("ε");
 
-type CurrentState = [string[], FinalizedLink];
+class CurrentState {
+  constructor(
+    // the current held input
+    public input: string[],
+    // the link that was used to get here. The end node is the current state
+    public link: FinalizedLink,
+    public startNodeIndex: number,
+    public endNodeIndex: number,
+  ) {}
+}
 
 export class Simulation {
   private states: CurrentState[];
@@ -24,7 +33,7 @@ export class Simulation {
   ) {
     this.states = state.links
       .filter((link) => link instanceof StartLink)
-      .map((link) => [input, link]);
+      .map((link) => new CurrentState(input, link, 0, 0));
   }
 
   #findTransition = (node: Node, input: string | typeof epsilon): FinalizedLink[] => {
@@ -44,15 +53,19 @@ export class Simulation {
       .filter((link) => link !== undefined);
   };
 
-  #deduplicateStates = (states: CurrentState[]) => {
+  #deduplicatedStates = (states: CurrentState[]) => {
     const deduplicatedStates: CurrentState[] = [];
 
-    for (const [input, link] of states) {
+    // a state is duplicated if the end node and input are the same
+    // these would lead to the same transitions
+
+    for (const state of states) {
       const existing = deduplicatedStates.some(
-        ([i, l]) => shallowArrayEquals(input, i) && l === link,
+        (s) =>
+          shallowArrayEquals(state.input, s.input) && s.link.endNode() === state.link.endNode(),
       );
       if (!existing) {
-        deduplicatedStates.push([input, link]);
+        deduplicatedStates.push(state);
       }
     }
 
@@ -64,31 +77,56 @@ export class Simulation {
 
     const newStates: CurrentState[] = [];
 
-    for (const [input, link] of this.states) {
+    // end nodes get the same index if they have the same input
+    const endNodeIndices = new Map<Node, string[][]>();
+    const getEndNodeIndex = (link: FinalizedLink, input: string[]) => {
+      const inputs = endNodeIndices.get(link.endNode()) ?? [];
+      const index = inputs.findIndex((i) => shallowArrayEquals(i, input));
+      if (index === -1) {
+        inputs.push(input);
+        endNodeIndices.set(link.endNode(), inputs);
+        return inputs.length - 1;
+      } else {
+        return index;
+      }
+    };
+
+    for (const state of this.#deduplicatedStates(this.states)) {
       // are there any epsilon transitions?
-      const epsilonTransitions = this.#findTransition(link.endNode(), epsilon);
+      const epsilonTransitions = this.#findTransition(state.link.endNode(), epsilon);
       // we can get there without consuming input
       for (const link of epsilonTransitions) {
-        newStates.push([input, link]);
+        newStates.push(
+          new CurrentState(
+            state.input,
+            link,
+            state.endNodeIndex,
+            getEndNodeIndex(link, state.input),
+          ),
+        );
       }
 
       // are there any consuming transitions we can take?
-      if (input.length === 0) continue;
+      if (state.input.length === 0) continue;
 
-      const [char, rest] = [input[0], input.slice(1)];
+      const [char, rest] = [state.input[0], state.input.slice(1)];
 
-      const charTransitions = this.#findTransition(link.endNode(), char);
+      const charTransitions = this.#findTransition(state.link.endNode(), char);
       for (const link of charTransitions) {
-        newStates.push([rest, link]);
+        newStates.push(
+          new CurrentState(rest, link, state.endNodeIndex, getEndNodeIndex(link, rest)),
+        );
       }
     }
 
-    this.states = this.#deduplicateStates(newStates);
+    this.states = newStates;
   };
 
   getCurrentSimulationState = (): SimulationState => {
     // a state is accepting if we are in an accepting state and there is no more input
-    if (this.states.some(([input, link]) => link.endNode().isAcceptState && input.length === 0)) {
+    if (
+      this.states.some((state) => state.link.endNode().isAcceptState && state.input.length === 0)
+    ) {
       return "accept";
     }
 
@@ -109,24 +147,21 @@ export class Simulation {
       Math.max(0, Math.min(1, (time - this.#stepTime) / animationTimeMs)),
     );
     const fontSize = 30;
-    const overlapOffset = fontSize * 0.6;
+    const overlapOffset = fontSize * 0.75;
     const familyFace = "IBM Plex Sans";
 
-    // TODO: indices are not stable across simulation steps
-    // assign indexes for states grouped by node and links
-    const counters = new Map<Node | FinalizedLink, number>();
+    // assign indexes for states taking the same link
+    const linkCounters = new Map<FinalizedLink, number>();
     for (const state of this.states) {
-      const [inputRaw, link] = state;
+      const { input: inputRaw, link } = state;
       const startNode = link.startNode();
       const endNode = link.endNode();
 
       // get indices
-      // TODO: indices should be separate for end and start
-      const nodeCounter = counters.get(endNode) ?? 0;
-      const linkCounter = counters.get(link) ?? 0;
-      counters.set(endNode, nodeCounter + 1);
-      counters.set(link, linkCounter + 1);
-      const nodeOffset = (1 + nodeCounter) * overlapOffset;
+      const linkCounter = linkCounters.get(link) ?? 0;
+      linkCounters.set(link, linkCounter + 1);
+      const startNodeOffset = (0.5 + state.startNodeIndex) * overlapOffset;
+      const endNodeOffset = (0.5 + state.endNodeIndex) * overlapOffset;
       const linkOffset = (1 + linkCounter) * overlapOffset;
 
       const input = inputRaw.join("");
@@ -140,7 +175,7 @@ export class Simulation {
           // go from top of the node to the start of the arrow
           const progress = animationProgress / positioningFrac;
           const point = lineTween(
-            { x: startNode.x, y: startNode.y - (Node.radius + nodeOffset) },
+            { x: startNode.x, y: startNode.y - (Node.radius + startNodeOffset) },
             link.tween(0, linkOffset),
             progress,
           );
@@ -161,7 +196,7 @@ export class Simulation {
           const progress = (animationProgress - (1 - positioningFrac)) / positioningFrac;
           const point = lineTween(
             link.tween(1, linkOffset),
-            { x: endNode.x, y: endNode.y - (Node.radius + nodeOffset) },
+            { x: endNode.x, y: endNode.y - (Node.radius + endNodeOffset) },
             progress,
           );
 

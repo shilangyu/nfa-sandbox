@@ -12,8 +12,6 @@ import { FinalizedLink, State } from "./state";
 import "./style.css";
 import { Point } from "./utils";
 
-// TODO: change cursor when dragging
-
 const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
 const simulationStep = document.querySelector<HTMLButtonElement>("#simulation-step")!;
 const simulationStateRunning = document.querySelector<HTMLDivElement>(
