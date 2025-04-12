@@ -7,7 +7,13 @@ export class SelfLink implements Component {
   node: Node;
   anchorAngle: number = 0;
   moveOffsetAngle: number = 0;
-  text: string = "";
+  private _text: string = "";
+  get text(): string {
+    return this._text;
+  }
+  set text(value: string) {
+    this._text = value.charAt(0);
+  }
 
   constructor(node: Node, start: Point | undefined) {
     this.node = node;

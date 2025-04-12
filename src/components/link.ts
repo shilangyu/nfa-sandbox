@@ -6,7 +6,13 @@ import { Node } from "./node";
 export class Link implements Component {
   nodeA: Node;
   nodeB: Node;
-  text: string = "";
+  private _text: string = "";
+  get text(): string {
+    return this._text;
+  }
+  set text(value: string) {
+    this._text = value.charAt(0);
+  }
   lineAngleAdjust = 0; // value to add to textAngle when link is straight line
   // make anchor point relative to the locations of nodeA and nodeB
   parallelPart = 0.5; // percentage from nodeA to nodeB

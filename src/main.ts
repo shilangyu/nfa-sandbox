@@ -99,7 +99,6 @@ simulationInput.addEventListener("input", () => {
 });
 
 simulationStep.addEventListener("click", () => {
-  // TODO: this is a bad way to create letters. We did not restrict links to accept single-character strings
   const input = simulationInput.value.split("");
   state.simulateStep(input);
 });
@@ -270,7 +269,7 @@ document.addEventListener("keydown", function (e) {
     state.selectedObject !== undefined &&
     "text" in state.selectedObject
   ) {
-    state.selectedObject.text += e.key;
+    state.selectedObject.text = e.key;
 
     // don't let keys do their actions (like space scrolls down the page)
     return false;
