@@ -45,6 +45,12 @@ h1 {
   align-items: center;
 }
 
+#instructions {
+  display: flex;
+  flex-direction: column;
+  padding: 0em 2em;
+}
+
 #sandbox {
   flex: 1;
   height: 100%;

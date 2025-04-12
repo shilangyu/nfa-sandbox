@@ -7,6 +7,18 @@
     <title>NFA simulation</title>
   </head>
   <body>
+    <div id="instructions">
+      <p>
+        Vous avez à disposition une sandbox (bac à sable) dans laquelle vous pouvez construire un
+        automate et simuler son exécution pour un mot donné en entrée (input). Pouvez-vous
+        construire un automate qui accepte le langage régulier donné ci-dessous ?
+      </p>
+      <code>[01]*1[01][01]</code>
+      <p>
+        In other words, a word is part of that language if the third-to-last character is a
+        <code>1</code>, and all the rest is either a <code>0</code> or a <code>1</code>.
+      </p>
+    </div>
     <canvas id="sandbox"></canvas>
     <div id="simulation">
       <input type="text" id="simulation-input" placeholder="Input string" />
