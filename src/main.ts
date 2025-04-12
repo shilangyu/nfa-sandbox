@@ -21,6 +21,8 @@ const simulationStateAccept = document.querySelector<HTMLDivElement>(
   "#simulation-state > .success",
 )!;
 const simulationStateReject = document.querySelector<HTMLDivElement>("#simulation-state > .error")!;
+const showHelp = document.querySelector<HTMLButtonElement>("#show-help")!;
+const helpDialog = document.querySelector<HTMLDialogElement>("#help-dialog")!;
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const ctx = sandbox.getContext("2d")!;
@@ -117,6 +119,16 @@ const saveWith = async (exporter: DrawingContext) => {
   a.click();
   URL.revokeObjectURL(url);
 };
+
+showHelp.addEventListener("click", () => {
+  helpDialog.showModal();
+});
+
+helpDialog.addEventListener("click", (e) => {
+  if (e.target === helpDialog) {
+    helpDialog.close();
+  }
+});
 
 document
   .querySelector("#export-png")!

@@ -42,6 +42,7 @@ h1 {
 .row {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 #sandbox {
@@ -90,6 +91,17 @@ h1 {
 
 .spacer {
   flex: 1;
+}
+
+dialog {
+  padding: 0px;
+  border: none;
+  border-radius: 8px;
+}
+
+dialog > div {
+  height: 100%;
+  padding: 0.1em 1em;
 }
 
 button {
