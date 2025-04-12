@@ -6,8 +6,6 @@ import { SelfLink } from "./components/selfLink";
 import { StartLink } from "./components/startLink";
 import { TemporaryLink } from "./components/temporaryLink";
 import { CanvasDrawingContext } from "./drawing-context/canvas";
-import { LatexDrawingContext } from "./drawing-context/latex";
-import { SvgDrawingContext } from "./drawing-context/svg";
 import { FinalizedLink, State } from "./state";
 import "./style.css";
 import { Point } from "./utils";
@@ -103,19 +101,6 @@ simulationStep.addEventListener("click", () => {
 let movedObject: FinalizedLink | Node | undefined = undefined;
 let originalClick: Point | undefined = undefined;
 
-const saveWith = async (exporter: DrawingContext) => {
-  state.selectObject(undefined);
-  state.resetSimulation();
-  drawWith(exporter);
-  const blob = await exporter.export();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "export";
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
 showHelp.addEventListener("click", () => {
   helpDialog.showModal();
 });
@@ -125,16 +110,6 @@ helpDialog.addEventListener("click", (e) => {
     helpDialog.close();
   }
 });
-
-document
-  .querySelector("#export-png")!
-  .addEventListener("click", () => saveWith(new CanvasDrawingContext(ctx)));
-document
-  .querySelector("#export-svg")!
-  .addEventListener("click", () => saveWith(new SvgDrawingContext()));
-document
-  .querySelector("#export-latex")!
-  .addEventListener("click", () => saveWith(new LatexDrawingContext()));
 
 sandbox.addEventListener("dblclick", function (e) {
   const mouse = { x: e.offsetX, y: e.offsetY };
