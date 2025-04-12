@@ -89,9 +89,6 @@ const onResize = () => {
   sandbox.style.height = `${rect.height}px`;
 };
 
-// TODO: does not work properly
-window.addEventListener("resize", onResize);
-
 onResize();
 
 simulationInput.addEventListener("input", () => {
