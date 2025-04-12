@@ -8,6 +8,7 @@ import { TemporaryLink } from "./components/temporaryLink";
 import { CanvasDrawingContext } from "./drawing-context/canvas";
 import { FinalizedLink, State } from "./state";
 import "./style.css";
+import { check } from "./test";
 import { Point } from "./utils";
 
 const simulationInput = document.querySelector<HTMLInputElement>("#simulation-input")!;
@@ -21,6 +22,7 @@ const simulationStateAccept = document.querySelector<HTMLDivElement>(
 const simulationStateReject = document.querySelector<HTMLDivElement>("#simulation-state > .error")!;
 const showHelp = document.querySelector<HTMLButtonElement>("#show-help")!;
 const helpDialog = document.querySelector<HTMLDialogElement>("#help-dialog")!;
+const testButton = document.querySelector<HTMLButtonElement>("#test")!;
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const ctx = sandbox.getContext("2d")!;
@@ -96,6 +98,20 @@ simulationInput.addEventListener("input", () => {
 simulationStep.addEventListener("click", () => {
   const input = simulationInput.value.split("");
   state.simulateStep(input);
+});
+
+testButton.addEventListener("click", () => {
+  const result = check(state);
+
+  if (result === undefined) {
+    alert("Tout est correct !");
+  } else if ("shouldPass" in result) {
+    alert(
+      `Le mot ${result.shouldPass} est dans le langage mais n'est pas accepté par votre automate.`,
+    );
+  } else {
+    alert(`Le mot ${result.shouldFail} n'est dans le langage mais est accepté par votre automate.`);
+  }
 });
 
 let movedObject: FinalizedLink | Node | undefined = undefined;
