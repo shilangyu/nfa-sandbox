@@ -21,18 +21,33 @@
       <span class="spacer"></span>
       <dialog id="help-dialog">
         <div>
+          <h4>State ◯</h4>
           <ul>
-            <li><b>Add a state:</b> double-click on the canvas</li>
-            <li><b>Add an arrow:</b> shift-drag on the canvas</li>
-            <li><b>Move something:</b> drag it around</li>
+            <li><b>Add:</b> double-click on the canvas</li>
+            <li><b>Move:</b> drag it around</li>
+            <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
+            <li><b>Make it accepting:</b> double-click it</li>
             <li>
-              <b>Delete something:</b> click it and press the delete key (not the backspace key)
+              <b>Name:</b> click it and type something
+              <ul>
+                <li><b>Numeric subscript:</b> put an underscore before the number (like "S_0")</li>
+                <li><b>Greek letter:</b> put a backslash before it (like "\beta")</li>
+              </ul>
             </li>
           </ul>
+          <h4>Transition →</h4>
           <ul>
-            <li><b>Make accept state:</b> double-click on an existing state</li>
-            <li><b>Type numeric subscript:</b> put an underscore before the number (like "S_0")</li>
-            <li><b>Type greek letter:</b> put a backslash before it (like "\beta")</li>
+            <li>
+              <b>Add:</b>
+              <ul>
+                <li><b>Start transition:</b> shift-drag from the canvas to a state</li>
+                <li><b>Link states:</b> shift-drag from one state to the other</li>
+                <li><b>Self-loop:</b> shift-click on a state</li>
+              </ul>
+            </li>
+            <li><b>Move:</b> drag it around</li>
+            <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
+            <li><b>Assign transition character:</b> click it and type something</li>
           </ul>
         </div>
       </dialog>
