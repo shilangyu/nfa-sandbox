@@ -134,7 +134,6 @@ export class Simulation {
     return this.states.length === 0 ? "reject" : "running";
   };
 
-  // TODO: animation of empty inputs is invisible
   draw = (c: DrawingContext, time: number) => {
     if (this.#stepTime === undefined) {
       this.#stepTime = time;
@@ -164,7 +163,7 @@ export class Simulation {
       const endNodeOffset = (0.5 + state.endNodeIndex) * overlapOffset;
       const linkOffset = (1 + linkCounter) * overlapOffset;
 
-      const input = inputRaw.join("");
+      const input = inputRaw.join("") || "∅";
       const token = link.token() ?? "";
       c.font = `${fontSize}px "${familyFace}"`;
       const tokenWidth = c.measureText(token).width;
