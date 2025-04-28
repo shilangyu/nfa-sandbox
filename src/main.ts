@@ -28,7 +28,52 @@ const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
 const ctx = sandbox.getContext("2d")!;
 const c = new CanvasDrawingContext(ctx);
 
-const state = loadBackup() ?? new State();
+const defaultState = () => {
+  const state = new State();
+  const addLink = <T extends FinalizedLink>(link: T, edit?: (self: T) => void) => {
+    edit?.(link);
+    state.setCurrentLink(link);
+    state.upgradeCurrentLink();
+  };
+
+  const n1 = new Node(300, 300);
+  const n2 = new Node(450, 300);
+  const n3 = new Node(600, 300);
+  n3.toggleAcceptState();
+
+  state.addNode(n1);
+  state.addNode(n2);
+  state.addNode(n3);
+
+  addLink(new StartLink(n1, { point: { x: 250, y: 300 }, snapToPadding: State.snapToPadding }));
+  addLink(new Link(n1, n2), (l) => {
+    l.text = "a";
+    l.lineAngleAdjust = Math.PI;
+    l.parallelPart = 0.47;
+    l.perpendicularPart = -29;
+  });
+  addLink(new Link(n1, n2), (l) => {
+    l.text = "b";
+    l.lineAngleAdjust = 0;
+    l.parallelPart = 0.54;
+    l.perpendicularPart = 29;
+  });
+  addLink(new SelfLink(n2, undefined), (l) => {
+    l.text = "a";
+    l.anchorAngle = -1.45;
+  });
+  addLink(new Link(n2, n3), (l) => {
+    l.text = "";
+    l.lineAngleAdjust = 0;
+    l.parallelPart = 0.5;
+    l.perpendicularPart = 0;
+  });
+
+  state.selectObject(undefined);
+  return state;
+};
+
+const state = loadBackup() ?? defaultState();
 
 const canvasHasFocus = () => {
   return (document.activeElement ?? document.body) === document.body;
