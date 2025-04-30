@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NFA simulation</title>
+    <title>Simulation d'ANF</title>
   </head>
   <body>
     <main>
@@ -16,19 +16,22 @@
         </p>
         <code>[01]*1[01][01]</code>
         <p>
-          In other words, a word is part of that language if the third-to-last character is a
-          <code>1</code>, and all the rest is either a <code>0</code> or a <code>1</code>.
+          En d'autres termes, un mot fait partie de cette langue si
+          <b>l'avant-avant-dernier</b> caractère est un <code>1</code> et que chacun des autres
+          caractères est soit un <code>0</code>, soit un <code>1</code>.
         </p>
       </div>
       <canvas id="sandbox"></canvas>
       <div id="simulation">
         <input type="text" id="simulation-input" placeholder="Input string" />
-        <button id="simulation-step">Step</button>
+        <button id="simulation-step">Simuler une étape</button>
         <div class="row">
           <div id="simulation-state">
-            <div style="visibility: hidden" class="error">Rejected</div>
-            <div style="visibility: hidden" class="success">Accepted</div>
-            <div style="visibility: hidden" class="progress">Running...</div>
+            <div style="visibility: hidden" class="error">Rejeté</div>
+            <div style="visibility: hidden" class="success">Accepté</div>
+            <div style="visibility: hidden" class="progress">
+              Simulation non terminée (cliquer sur "<b>simuler une étape</b>" pour continuer)...
+            </div>
           </div>
         </div>
         <span class="spacer"></span>
@@ -36,27 +39,48 @@
       </div>
     </main>
     <aside>
-      <h4>State ◯</h4>
+      <h4>État ◯</h4>
       <ul>
-        <li><b>Add:</b> double-click on the canvas</li>
-        <li><b>Move:</b> drag it around</li>
-        <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
-        <li><b>Make it accepting:</b> double-click it</li>
-        <li><b>Name:</b> click it and type something</li>
+        <li><b>Ajouter :</b> double-cliquer dans un espace vide</li>
+        <li><b>Déplacer :</b> cliquer-glisser (drag) jusqu'à l'endroit souhaité</li>
+        <li>
+          <b>Supprimer :</b> cliquer pour sélectionner puis appuyer sur la touche "Del" (et non pas
+          "backspace", touche habituelle pour supprimer)
+        </li>
+        <li>
+          <b>Rendre un état <em>final</em> :</b> double-cliquer sur l'état
+        </li>
+        <li><b>Nomer l'état :</b> cliquer pour sélectionner puis écrire (un seul caractère)</li>
       </ul>
       <h4>Transition →</h4>
       <ul>
         <li>
-          <b>Add:</b>
+          <b>Ajouter:</b>
           <ul>
-            <li><b>Start transition:</b> shift-drag from the canvas to a state</li>
-            <li><b>Link states:</b> shift-drag from one state to the other</li>
-            <li><b>Self-loop:</b> shift-click on a state</li>
+            <li>
+              <b>Transition de départ (marque l'état comme <em>initial</em>) :</b> maintenir appuyé
+              la touche "maj" (shift) et cliquer-glisser (drag) depuis un endroit vide jusqu'à un
+              état
+            </li>
+            <li>
+              <b>Transition entre états :</b> maintenir appuyé la touche "maj" (shift) et
+              cliquer-glisser (drag) d'un état à un autre
+            </li>
+            <li>
+              <b>Boucle sur un état :</b> maintenir appuyé la touche "maj" (shift) et cliquer sur un
+              état
+            </li>
           </ul>
         </li>
-        <li><b>Move:</b> drag it around</li>
-        <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
-        <li><b>Assign transition character:</b> click it and type something</li>
+        <li><b>Déplacer :</b> cliquer-glisser (drag) jusqu'à l'endroit souhaité</li>
+        <li>
+          <b>Supprimer :</b> cliquer pour sélectionner puis appuyer sur la touche "Del" (et non pas
+          "backspace", touche habituelle pour supprimer)
+        </li>
+        <li>
+          <b>Assigner un caractère pour la transition :</b> cliquer pour sélectionner la flèche et
+          écrire le caractère
+        </li>
       </ul>
     </aside>
     <script type="module" src="/src/main.ts"></script>
