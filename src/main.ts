@@ -82,7 +82,7 @@ const canvasHasFocus = () => {
 const drawWith = (c: DrawingContext, time?: number) => {
   const hasFocus = canvasHasFocus();
   c.clearRect(0, 0, sandbox.width, sandbox.height);
-  state.draw(c, time ?? 0, hasFocus, window.matchMedia("(prefers-color-scheme: dark)").matches);
+  state.draw(c, time ?? 0, hasFocus, false);
 };
 
 window.requestAnimationFrame((zero) => {

@@ -7,7 +7,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
   color: #213547;
   background-color: #ffffff;
 
@@ -147,20 +146,4 @@ input {
 input:focus {
   border-color: #646cff;
   outline: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-  }
-  a:hover {
-    color: #535bf2;
-  }
-  button {
-    background-color: #1a1a1a;
-  }
-  #sandbox {
-    background-color: #1a1a1a;
-  }
 }
