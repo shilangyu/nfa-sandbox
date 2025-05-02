@@ -106,12 +106,13 @@ export class State {
     c.translate(0.5, 0.5);
 
     const strokeColor = darkMode ? "white" : "black";
+    const selectedColor = darkMode ? "cyan" : "blue";
 
     for (const node of this.nodes) {
       c.save();
       const isSelected = node === this.selectedObject;
       c.lineWidth = 1;
-      c.fillStyle = c.strokeStyle = isSelected ? "blue" : strokeColor;
+      c.fillStyle = c.strokeStyle = isSelected ? selectedColor : strokeColor;
       node.draw(c, hasFocus, isSelected);
       c.restore();
     }
@@ -119,7 +120,7 @@ export class State {
       c.save();
       const isSelected = link === this.selectedObject;
       c.lineWidth = 1;
-      c.fillStyle = c.strokeStyle = isSelected ? "blue" : strokeColor;
+      c.fillStyle = c.strokeStyle = isSelected ? selectedColor : strokeColor;
       link.draw(c, hasFocus, isSelected);
       c.restore();
     }
