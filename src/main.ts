@@ -20,8 +20,6 @@ const simulationStateAccept = document.querySelector<HTMLDivElement>(
   "#simulation-state > .success",
 )!;
 const simulationStateReject = document.querySelector<HTMLDivElement>("#simulation-state > .error")!;
-const showHelp = document.querySelector<HTMLButtonElement>("#show-help")!;
-const helpDialog = document.querySelector<HTMLDialogElement>("#help-dialog")!;
 const testButton = document.querySelector<HTMLButtonElement>("#test")!;
 
 const sandbox = document.querySelector<HTMLCanvasElement>("#sandbox")!;
@@ -161,16 +159,6 @@ testButton.addEventListener("click", () => {
 
 let movedObject: FinalizedLink | Node | undefined = undefined;
 let originalClick: Point | undefined = undefined;
-
-showHelp.addEventListener("click", () => {
-  helpDialog.showModal();
-});
-
-helpDialog.addEventListener("click", (e) => {
-  if (e.target === helpDialog) {
-    helpDialog.close();
-  }
-});
 
 sandbox.addEventListener("dblclick", function (e) {
   const mouse = { x: e.offsetX, y: e.offsetY };

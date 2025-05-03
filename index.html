@@ -7,82 +7,58 @@
     <title>NFA simulation</title>
   </head>
   <body>
-    <div id="instructions">
-      <p>
-        Vous avez à disposition une sandbox (bac à sable) dans laquelle vous pouvez construire un
-        automate et simuler son exécution pour un mot donné en entrée (input). Pouvez-vous
-        construire un automate qui accepte le langage régulier donné ci-dessous ?
-      </p>
-      <code>[01]*1[01][01]</code>
-      <p>
-        In other words, a word is part of that language if the third-to-last character is a
-        <code>1</code>, and all the rest is either a <code>0</code> or a <code>1</code>.
-      </p>
-    </div>
-    <canvas id="sandbox"></canvas>
-    <div id="simulation">
-      <input type="text" id="simulation-input" placeholder="Input string" />
-      <button id="simulation-step">Step</button>
-      <div class="row">
-        <div id="simulation-state">
-          <div style="visibility: hidden" class="error">Rejected</div>
-          <div style="visibility: hidden" class="success">Accepted</div>
-          <div style="visibility: hidden" class="progress">Running...</div>
-        </div>
+    <main>
+      <div id="instructions">
+        <p>
+          Vous avez à disposition une sandbox (bac à sable) dans laquelle vous pouvez construire un
+          automate et simuler son exécution pour un mot donné en entrée (input). Pouvez-vous
+          construire un automate qui accepte le langage régulier donné ci-dessous ?
+        </p>
+        <code>[01]*1[01][01]</code>
+        <p>
+          In other words, a word is part of that language if the third-to-last character is a
+          <code>1</code>, and all the rest is either a <code>0</code> or a <code>1</code>.
+        </p>
       </div>
-      <span class="spacer"></span>
-      <button id="test">Test</button>
-      <dialog id="help-dialog">
-        <div>
-          <h4>State ◯</h4>
-          <ul>
-            <li><b>Add:</b> double-click on the canvas</li>
-            <li><b>Move:</b> drag it around</li>
-            <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
-            <li><b>Make it accepting:</b> double-click it</li>
-            <li>
-              <b>Name:</b> click it and type something
-              <ul>
-                <li><b>Numeric subscript:</b> put an underscore before the number (like "S_0")</li>
-                <li><b>Greek letter:</b> put a backslash before it (like "\beta")</li>
-              </ul>
-            </li>
-          </ul>
-          <h4>Transition →</h4>
-          <ul>
-            <li>
-              <b>Add:</b>
-              <ul>
-                <li><b>Start transition:</b> shift-drag from the canvas to a state</li>
-                <li><b>Link states:</b> shift-drag from one state to the other</li>
-                <li><b>Self-loop:</b> shift-click on a state</li>
-              </ul>
-            </li>
-            <li><b>Move:</b> drag it around</li>
-            <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
-            <li><b>Assign transition character:</b> click it and type something</li>
-          </ul>
+      <canvas id="sandbox"></canvas>
+      <div id="simulation">
+        <input type="text" id="simulation-input" placeholder="Input string" />
+        <button id="simulation-step">Step</button>
+        <div class="row">
+          <div id="simulation-state">
+            <div style="visibility: hidden" class="error">Rejected</div>
+            <div style="visibility: hidden" class="success">Accepted</div>
+            <div style="visibility: hidden" class="progress">Running...</div>
+          </div>
         </div>
-      </dialog>
-      <button id="show-help">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-circle-help-icon lucide-circle-help"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          <path d="M12 17h.01" />
-        </svg>
-      </button>
-    </div>
+        <span class="spacer"></span>
+        <button id="test">Test</button>
+      </div>
+    </main>
+    <aside>
+      <h4>State ◯</h4>
+      <ul>
+        <li><b>Add:</b> double-click on the canvas</li>
+        <li><b>Move:</b> drag it around</li>
+        <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
+        <li><b>Make it accepting:</b> double-click it</li>
+        <li><b>Name:</b> click it and type something</li>
+      </ul>
+      <h4>Transition →</h4>
+      <ul>
+        <li>
+          <b>Add:</b>
+          <ul>
+            <li><b>Start transition:</b> shift-drag from the canvas to a state</li>
+            <li><b>Link states:</b> shift-drag from one state to the other</li>
+            <li><b>Self-loop:</b> shift-click on a state</li>
+          </ul>
+        </li>
+        <li><b>Move:</b> drag it around</li>
+        <li><b>Delete:</b> click it and press the delete key (not the backspace key)</li>
+        <li><b>Assign transition character:</b> click it and type something</li>
+      </ul>
+    </aside>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
