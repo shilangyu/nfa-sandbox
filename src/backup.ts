@@ -8,7 +8,6 @@ type Backup = {
   nodes: {
     x: number;
     y: number;
-    text: string;
     isAcceptState: boolean;
   }[];
   links: (
@@ -46,7 +45,6 @@ export const createBackup = (state: State) => {
     backup.nodes.push({
       x: node.x,
       y: node.y,
-      text: node.text,
       isAcceptState: node.isAcceptState,
     });
   }
@@ -98,7 +96,6 @@ export const loadBackup = (): State | undefined => {
     for (const backupNode of backup.nodes) {
       const node = new Node(backupNode.x, backupNode.y);
       node.isAcceptState = backupNode.isAcceptState;
-      node.text = backupNode.text;
       state.nodes.push(node);
     }
 

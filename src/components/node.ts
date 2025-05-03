@@ -1,5 +1,4 @@
 import { Component, DrawingContext } from "./component";
-import { drawText } from "./drawing";
 
 export class Node implements Component {
   x: number;
@@ -7,7 +6,6 @@ export class Node implements Component {
   moveOffsetX: number = 0;
   moveOffsetY: number = 0;
   isAcceptState: boolean = false;
-  text: string = "";
 
   static radius: number = 20;
 
@@ -26,14 +24,11 @@ export class Node implements Component {
     this.y = y + this.moveOffsetY;
   }
 
-  draw(c: DrawingContext, hasFocus: boolean, isSelected: boolean): void {
+  draw(c: DrawingContext, _hasFocus: boolean, _isSelected: boolean): void {
     // draw the circle
     c.beginPath();
     c.arc(this.x, this.y, Node.radius, 0, 2 * Math.PI, false);
     c.stroke();
-
-    // draw the text
-    drawText(c, this.text, this.x, this.y, undefined, isSelected, hasFocus);
 
     // draw a double circle for an accept state
     if (this.isAcceptState) {
